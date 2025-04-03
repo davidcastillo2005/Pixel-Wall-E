@@ -14,7 +14,7 @@ public class Token(TokenType type, string value)
         return new Token(token1.Type, token1.Value + token2.Value);
     }
 }
-public enum TokenType { Identifier, Addition, Subtraction, Multiplication, Division, Exponentiation, Remainder, LeftBracket, RightBracket, LeftSquareBracket, RightSquareBracket, Number, AssignOp, Comma }
+public enum TokenType { Identifier, Keyword, Addition, Subtraction, Multiplication, Division, Exponentiation, Remainder, LeftBracket, RightBracket, LeftSquareBracket, RightSquareBracket, Number, AssignOp, Comma, CBlue, CRed, CGreen }
 public class Lexer()
 {
     public static Token[] Tokenize(string input)
@@ -31,9 +31,34 @@ public class Lexer()
             }
             else if (i == input.Length - 1 || temp != "")
             {
-                token = char.IsDigit(temp[0]) == true ? new(TokenType.Number, temp) : new(TokenType.Identifier, temp);
-                tokens.Add(token);
-                temp = "";
+                switch (temp)
+                {
+                    case "GoTo":
+                        token = new(TokenType.Keyword, temp);
+                        tokens.Add(token);
+                        temp = "";
+                        break;
+                    case "Blue":
+                        token = new(TokenType.CBlue, temp);
+                        tokens.Add(token);
+                        temp = "";
+                        break;
+                    case "Green":
+                        token = new(TokenType.CGreen, temp);
+                        tokens.Add(token);
+                        temp = "";
+                        break;
+                    case "Red":
+                        token = new(TokenType.CRed, temp);
+                        tokens.Add(token);
+                        temp = "";
+                        break;
+                    default:
+                        token = char.IsDigit(temp[0]) == true ? new(TokenType.Number, temp) : new(TokenType.Identifier, temp);
+                        tokens.Add(token);
+                        temp = "";
+                        break;
+                }
             }
             switch (currentChar)
             {
