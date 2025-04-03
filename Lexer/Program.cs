@@ -7,7 +7,7 @@ internal class Program
         src.Token[] o = src.Lexer.Tokenize(i);
         foreach (var item in o)
         {
-            System.Console.WriteLine($"[{item.Type}, \"{item.Value}\"]");
+            System.Console.WriteLine($"[{item.Type}, \"{item.Lexeme}\"]");
         }
     }
 }
