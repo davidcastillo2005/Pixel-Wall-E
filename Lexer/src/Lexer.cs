@@ -1,14 +1,10 @@
 using System.Text.RegularExpressions;
 namespace Lexer.src;
-public class Token
+public class Token(TokenType type, string value)
 {
-    public TokenType Type { get; }
-    public string Value { get; set; }
-    public Token(TokenType type, string value)
-    {
-        Type = type;
-        Value = value;
-    }
+    public TokenType Type { get; } = type;
+    public string Value { get; set; } = value;
+
     public static Token Sum(Token token1, Token token2)
     {
         if (token1.Type != token2.Type)
@@ -18,50 +14,88 @@ public class Token
         return new Token(token1.Type, token1.Value + token2.Value);
     }
 }
-public enum TokenType { Identifier, BinaryOperator, Dots, Number, AssingOperator }
+public enum TokenType { Identifier, Addition, Subtraction, Multiplication, Division, Exponentiation, Remainder, LeftBracket, RightBracket, LeftSquareBracket, RightSquareBracket, Number, AssignOp, Comma }
 public class Lexer()
 {
-    public Token[] Tokenize(string input)
+    public static Token[] Tokenize(string input)
     {
         List<Token> tokens = [];
         string temp = "";
         for (int i = 0; i < input.Length; i++)
         {
             char currentChar = input[i];
-            if (char.IsDigit(currentChar))
+            Token token;
+            if (currentChar == '-' || char.IsDigit(currentChar) || char.IsLetter(currentChar))
             {
                 temp += currentChar;
             }
-            if (char.IsLetter(currentChar))
+            else if (i == input.Length - 1 || temp != "")
             {
-                temp += currentChar;
-            }
-            if ((i == input.Length - 1 || !char.IsDigit(currentChar) && !char.IsLetter(currentChar)) && temp != "")
-            {
-                Token token = char.IsDigit(temp[0]) == true ? new(TokenType.Number, temp) : new(TokenType.Identifier, temp);
+                token = char.IsDigit(temp[0]) == true ? new(TokenType.Number, temp) : new(TokenType.Identifier, temp);
                 tokens.Add(token);
                 temp = "";
             }
-            if (currentChar == '+' || currentChar == '-' || currentChar == '/' || currentChar == '*')
+            switch (currentChar)
             {
-                Token token = new(TokenType.BinaryOperator, currentChar.ToString());
-                tokens.Add(token);
-            }
-            if (currentChar == '=')
-            {
-                Token token = new(TokenType.AssingOperator, currentChar.ToString());
-                tokens.Add(token);
-            }
-            if (currentChar == '(' || currentChar == ')')
-            {
-                Token token = new(TokenType.Dots, currentChar.ToString());
-                tokens.Add(token);
+                case '+':
+                    token = new(TokenType.Addition, currentChar.ToString());
+                    tokens.Add(token);
+                    break;
+                case '-' when temp == "":
+                    token = new(TokenType.Subtraction, currentChar.ToString());
+                    tokens.Add(token);
+                    break;
+                case '/':
+                    token = new(TokenType.Division, currentChar.ToString());
+                    tokens.Add(token);
+                    break;
+                case '*':
+                    if (input[i + 1] == '*')
+                    {
+                        token = new(TokenType.Exponentiation, "**");
+                        tokens.Add(token);
+                        i++;
+                    }
+                    else
+                    {
+                        token = new(TokenType.Multiplication, currentChar.ToString());
+                        tokens.Add(token);
+                    }
+                    break;
+                case '<':
+                    if (input[i + 1] == '-')
+                    {
+                        token = new(TokenType.AssignOp, "<-");
+                        tokens.Add(token);
+                        i++;
+                    }
+                    break;
+                case '(':
+                    token = new(TokenType.LeftBracket, currentChar.ToString());
+                    tokens.Add(token);
+                    break;
+                case ')':
+                    token = new(TokenType.RightBracket, currentChar.ToString());
+                    tokens.Add(token);
+                    break;
+                case '[':
+                    token = new(TokenType.LeftSquareBracket, currentChar.ToString());
+                    tokens.Add(token);
+                    break;
+                case ']':
+                    token = new(TokenType.RightSquareBracket, currentChar.ToString());
+                    tokens.Add(token);
+                    break;
+                case ',':
+                    token = new(TokenType.Comma, currentChar.ToString());
+                    tokens.Add(token);
+                    break;
+                case '%':
+                    token = new(TokenType.Remainder, currentChar.ToString());
+                    tokens.Add(token);
+                    break;
             }
         }
-        if (temp != "")
-        {
-            Token token = new(TokenType.Dots, temp);
-        }
-        return tokens.ToArray();
+        return [.. tokens];
     }
 }
