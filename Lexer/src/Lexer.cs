@@ -4,17 +4,8 @@ public class Token(TokenType type, string value)
 {
     public TokenType Type { get; } = type;
     public string Value { get; set; } = value;
-
-    public static Token Sum(Token token1, Token token2)
-    {
-        if (token1.Type != token2.Type)
-        {
-            throw new Exception();
-        }
-        return new Token(token1.Type, token1.Value + token2.Value);
-    }
 }
-public enum TokenType { Identifier, Keyword, Addition, Subtraction, Multiplication, Division, Exponentiation, Remainder, LeftBracket, RightBracket, LeftSquareBracket, RightSquareBracket, Number, AssignOp, Comma, CBlue, CRed, CGreen }
+public enum TokenType { Identifier, Keyword, Addition, Subtraction, Multiplication, Division, Exponentiation, Remainder, LeftBracket, RightBracket, LeftSquareBracket, RightSquareBracket, LessOrEqual, GreaterOrEqual, Less, Greater, Equal, Number, Assign, Comma, Color }
 public class Lexer()
 {
     public static Token[] Tokenize(string input)
@@ -39,17 +30,12 @@ public class Lexer()
                         temp = "";
                         break;
                     case "Blue":
-                        token = new(TokenType.CBlue, temp);
-                        tokens.Add(token);
-                        temp = "";
-                        break;
                     case "Green":
-                        token = new(TokenType.CGreen, temp);
-                        tokens.Add(token);
-                        temp = "";
-                        break;
                     case "Red":
-                        token = new(TokenType.CRed, temp);
+                    case "Yellow":
+                    case "Black":
+                    case "White":
+                        token = new(TokenType.Color, temp);
                         tokens.Add(token);
                         temp = "";
                         break;
@@ -90,7 +76,46 @@ public class Lexer()
                 case '<':
                     if (input[i + 1] == '-')
                     {
-                        token = new(TokenType.AssignOp, "<-");
+                        token = new(TokenType.Assign, "<-");
+                        tokens.Add(token);
+                        i++;
+                    }
+                    else
+                    {
+                        token = new(TokenType.Less, currentChar.ToString());
+                        tokens.Add(token);
+                    }
+                    break;
+                case '>':
+                    if (input[i + 1] == '=')
+                    {
+                        token = new(TokenType.GreaterOrEqual, ">=");
+                        tokens.Add(token);
+                        i++;
+                    }
+                    else
+                    {
+                        token = new(TokenType.Greater, currentChar.ToString());
+                        tokens.Add(token);
+                    }
+                    break;
+                case '=':
+                    if (input[i + 1] == '=')
+                    {
+                        token = new(TokenType.Equal, "==");
+                        tokens.Add(token);
+                        i++;
+                    }
+                    else
+                    {
+                        token = new(TokenType.Assign, currentChar.ToString());
+                        tokens.Add(token);
+                    }
+                    break;
+                case '!':
+                    if (input[i + 1] == '=')
+                    {
+                        token = new(TokenType.Equal, "!=");
                         tokens.Add(token);
                         i++;
                     }
