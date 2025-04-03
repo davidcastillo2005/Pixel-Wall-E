@@ -1,11 +1,10 @@
-using System.Text.RegularExpressions;
 namespace Lexer.src;
 public class Token(TokenType type, string value)
 {
     public TokenType Type { get; } = type;
     public string Value { get; set; } = value;
 }
-public enum TokenType { Identifier, Keyword, Addition, Subtraction, Multiplication, Division, Exponentiation, Remainder, LeftBracket, RightBracket, LeftSquareBracket, RightSquareBracket, LessOrEqual, GreaterOrEqual, Less, Greater, Equal, Number, Assign, Comma, Color }
+public enum TokenType { Identifier, Keyword, Addition, Subtraction, Multiplication, Division, Exponentiation, Remainder, LeftBracket, RightBracket, LeftSquareBracket, RightSquareBracket, LessOrEqual, GreaterOrEqual, Less, Greater, Equal, Number, Assign, Comma, Color, NewLine }
 public class Lexer()
 {
     public static Token[] Tokenize(string input)
@@ -22,32 +21,32 @@ public class Lexer()
             }
             else if (i == input.Length - 1 || temp != "")
             {
-                switch (temp)
+                if (temp == "false" || temp == "true" || temp == "Goto" || temp == "GoTo")
                 {
-                    case "GoTo":
-                        token = new(TokenType.Keyword, temp);
-                        tokens.Add(token);
-                        temp = "";
-                        break;
-                    case "Blue":
-                    case "Green":
-                    case "Red":
-                    case "Yellow":
-                    case "Black":
-                    case "White":
-                        token = new(TokenType.Color, temp);
-                        tokens.Add(token);
-                        temp = "";
-                        break;
-                    default:
-                        token = char.IsDigit(temp[0]) == true ? new(TokenType.Number, temp) : new(TokenType.Identifier, temp);
-                        tokens.Add(token);
-                        temp = "";
-                        break;
+                    token = new(TokenType.Keyword, temp);
+                    tokens.Add(token);
+                    temp = "";
+                }
+                else if (temp == "Blue" || temp == "Green" || temp == "Red" || temp == "Yellow" || temp == "Black" || temp == "White")
+                {
+                    token = new(TokenType.Color, temp);
+                    tokens.Add(token);
+                    temp = "";
+                }
+                else
+                {
+                    token = char.IsDigit(temp[0]) ? new(TokenType.Number, temp) : new(TokenType.Identifier, temp);
+                    tokens.Add(token);
+                    temp = "";
                 }
             }
             switch (currentChar)
             {
+                case '\n':
+                    token = new(TokenType.NewLine, "\\n");
+                    tokens.Add(token);
+                    i++;
+                    break;
                 case '+':
                     token = new(TokenType.Addition, currentChar.ToString());
                     tokens.Add(token);
