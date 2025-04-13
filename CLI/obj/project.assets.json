@@ -1,11 +1,65 @@
 {
   "version": 3,
   "targets": {
-    "net9.0": {}
+    "net9.0": {
+      "Lexer/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/Lexer.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Lexer.dll": {}
+        }
+      },
+      "Parser/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "Lexer": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Parser.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Parser.dll": {}
+        }
+      },
+      "Reader/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/Reader.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Reader.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Lexer/1.0.0": {
+      "type": "project",
+      "path": "../Lexer/Lexer.csproj",
+      "msbuildProject": "../Lexer/Lexer.csproj"
+    },
+    "Parser/1.0.0": {
+      "type": "project",
+      "path": "../Parser/Parser.csproj",
+      "msbuildProject": "../Parser/Parser.csproj"
+    },
+    "Reader/1.0.0": {
+      "type": "project",
+      "path": "../Reader/Reader.csproj",
+      "msbuildProject": "../Reader/Reader.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net9.0": []
+    "net9.0": [
+      "Lexer >= 1.0.0",
+      "Parser >= 1.0.0",
+      "Reader >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Audiovisual1\\.nuget\\packages\\": {},
@@ -38,7 +92,17 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Audiovisual1\\Documents\\Pixel Wall-E\\Lexer\\Lexer.csproj": {
+              "projectPath": "C:\\Users\\Audiovisual1\\Documents\\Pixel Wall-E\\Lexer\\Lexer.csproj"
+            },
+            "C:\\Users\\Audiovisual1\\Documents\\Pixel Wall-E\\Parser\\Parser.csproj": {
+              "projectPath": "C:\\Users\\Audiovisual1\\Documents\\Pixel Wall-E\\Parser\\Parser.csproj"
+            },
+            "C:\\Users\\Audiovisual1\\Documents\\Pixel Wall-E\\Reader\\Reader.csproj": {
+              "projectPath": "C:\\Users\\Audiovisual1\\Documents\\Pixel Wall-E\\Reader\\Reader.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

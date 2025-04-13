@@ -1,4 +1,5 @@
 namespace PixelWall_E.Lexer.src;
+
 public class Token(Type type, string value)
 {
     public Type Type { get; } = type;
@@ -13,32 +14,7 @@ public enum Type
 }
 public class Lexer
 {
-    private static bool IsPartOfIdentifierOrNumber(char c)
-    {
-        return char.IsLetterOrDigit(c) || c == '-';
-    }
-    private static void ProcessTemp(ref string temp, List<Token> tokens)
-    {
-        switch (temp)
-        {
-            case "false" or "true" or "Goto" or "GoTo" or "Spawn":
-                tokens.Add(new(Type.Keyword, temp));
-                break;
-            case "Blue" or "Green" or "Red" or "Yellow" or "Black" or "White":
-                tokens.Add(new(Type.Color, temp));
-                break;
-            default:
-                tokens.Add(char.IsDigit(temp[0]) ? new(Type.Number, temp) : new(Type.Identifier, temp));
-                break;
-        }
-        temp = "";
-    }
-    private static bool PeekNext(string input, int i, char c)
-    {
-        return i < input.Length - 1 && input[i + 1] == c;
-    }
-
-    public static Token[] Tokenize(string input)
+    public static Token[] ScanInput(string input)
     {
         string temp = "";
         List<Token> tokens = [];
@@ -140,5 +116,32 @@ public class Lexer
             }
         }
         return [.. tokens];
+    }
+
+    private static bool IsPartOfIdentifierOrNumber(char c)
+    {
+        return char.IsLetterOrDigit(c) || c == '-';
+    }
+
+    private static void ProcessTemp(ref string temp, List<Token> tokens)
+    {
+        switch (temp)
+        {
+            case "false" or "true" or "Goto" or "GoTo" or "Spawn":
+                tokens.Add(new(Type.Keyword, temp));
+                break;
+            case "Blue" or "Green" or "Red" or "Yellow" or "Black" or "White":
+                tokens.Add(new(Type.Color, temp));
+                break;
+            default:
+                tokens.Add(char.IsDigit(temp[0]) ? new(Type.Number, temp) : new(Type.Identifier, temp));
+                break;
+        }
+        temp = "";
+    }
+
+    private static bool PeekNext(string input, int i, char c)
+    {
+        return i < input.Length - 1 && input[i + 1] == c;
     }
 }
