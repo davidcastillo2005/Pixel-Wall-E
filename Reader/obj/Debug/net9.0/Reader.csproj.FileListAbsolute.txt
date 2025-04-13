@@ -1,0 +1,15 @@
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\bin\Debug\net9.0\Reader.exe
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\bin\Debug\net9.0\Reader.deps.json
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\bin\Debug\net9.0\Reader.runtimeconfig.json
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\bin\Debug\net9.0\Reader.dll
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\bin\Debug\net9.0\Reader.pdb
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\obj\Debug\net9.0\Reader.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\obj\Debug\net9.0\Reader.AssemblyInfoInputs.cache
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\obj\Debug\net9.0\Reader.AssemblyInfo.cs
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\obj\Debug\net9.0\Reader.csproj.CoreCompileInputs.cache
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\obj\Debug\net9.0\Reader.sourcelink.json
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\obj\Debug\net9.0\Reader.dll
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\obj\Debug\net9.0\refint\Reader.dll
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\obj\Debug\net9.0\Reader.pdb
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\obj\Debug\net9.0\Reader.genruntimeconfig.cache
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Reader\obj\Debug\net9.0\ref\Reader.dll

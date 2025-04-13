@@ -1,153 +1,141 @@
-namespace Lexer.src;
-public class Token(Type type, string lexeme)
+namespace PixelWall_E.Lexer.src;
+public class Token(Type type, string value)
 {
     public Type Type { get; } = type;
-    public string Lexeme { get; set; } = lexeme;
+    public string Value = value;
 }
 public enum Type
 {
     Identifier, Keyword, Addition, Subtraction, Multiplication, Division,
-    Exponentiation, Remainder, LeftBracket, RightBracket, LeftSquareBracket,
-    RightSquareBracket, LessOrEqual, GreaterOrEqual, Less, Greater, Equal,
-    Number, Assign, Comma, Color, NewLine
+    Exponentiation, remainder, LeftBracket, RightBracket, LeftSquareBracket,
+    RightSquareBracketThan, LessOrEqualThan, GreaterOrEqualThan, LessThan,
+    GreaterThan, Equal, Number, Assign, Comma, Color, NewLine, NotEqual
 }
-public class Lexer()
+public class Lexer
 {
+    private static bool IsPartOfIdentifierOrNumber(char c)
+    {
+        return char.IsLetterOrDigit(c) || c == '-';
+    }
+    private static void ProcessTemp(ref string temp, List<Token> tokens)
+    {
+        switch (temp)
+        {
+            case "false" or "true" or "Goto" or "GoTo" or "Spawn":
+                tokens.Add(new(Type.Keyword, temp));
+                break;
+            case "Blue" or "Green" or "Red" or "Yellow" or "Black" or "White":
+                tokens.Add(new(Type.Color, temp));
+                break;
+            default:
+                tokens.Add(char.IsDigit(temp[0]) ? new(Type.Number, temp) : new(Type.Identifier, temp));
+                break;
+        }
+        temp = "";
+    }
+    private static bool PeekNext(string input, int i, char c)
+    {
+        return i < input.Length - 1 && input[i + 1] == c;
+    }
+
     public static Token[] Tokenize(string input)
     {
-        List<Token> tokens = [];
         string temp = "";
+        List<Token> tokens = [];
         for (int i = 0; i < input.Length; i++)
         {
             char currentChar = input[i];
-            Token token;
-            if (currentChar == '-' || char.IsDigit(currentChar) || char.IsLetter(currentChar))
+            if (IsPartOfIdentifierOrNumber(currentChar))
             {
                 temp += currentChar;
             }
-            else if (i == input.Length - 1 || temp != "")
+            if (i == input.Length - 1 || temp != "")
             {
-                if (temp == "false" || temp == "true" || temp == "Goto" || temp == "GoTo")
-                {
-                    token = new(Type.Keyword, temp);
-                    tokens.Add(token);
-                    temp = "";
-                }
-                else if (temp == "Blue" || temp == "Green" || temp == "Red" || temp == "Yellow" || temp == "Black" || temp == "White")
-                {
-                    token = new(Type.Color, temp);
-                    tokens.Add(token);
-                    temp = "";
-                }
-                else
-                {
-                    token = char.IsDigit(temp[0]) ? new(Type.Number, temp) : new(Type.Identifier, temp);
-                    tokens.Add(token);
-                    temp = "";
-                }
+                ProcessTemp(ref temp, tokens);
             }
             switch (currentChar)
             {
                 case '\n':
-                    token = new(Type.NewLine, "\\n");
-                    tokens.Add(token);
+                    tokens.Add(new(Type.NewLine, "\\n"));
                     i++;
                     break;
                 case '+':
-                    token = new(Type.Addition, currentChar.ToString());
-                    tokens.Add(token);
+                    tokens.Add(new(Type.Addition, currentChar.ToString()));
                     break;
                 case '-' when temp == "":
-                    token = new(Type.Subtraction, currentChar.ToString());
-                    tokens.Add(token);
+                    tokens.Add(new(Type.Subtraction, currentChar.ToString()));
                     break;
                 case '/':
-                    token = new(Type.Division, currentChar.ToString());
-                    tokens.Add(token);
+                    tokens.Add(new(Type.Division, currentChar.ToString()));
                     break;
                 case '*':
-                    if (input[i + 1] == '*')
+                    if (PeekNext(input, i, '*'))
                     {
-                        token = new(Type.Exponentiation, "**");
-                        tokens.Add(token);
+                        tokens.Add(new(Type.Exponentiation, "**"));
                         i++;
                     }
                     else
                     {
-                        token = new(Type.Multiplication, currentChar.ToString());
-                        tokens.Add(token);
+                        tokens.Add(new(Type.Multiplication, currentChar.ToString()));
                     }
                     break;
                 case '<':
-                    if (input[i + 1] == '-')
+                    if (PeekNext(input, i, '-'))
                     {
-                        token = new(Type.Assign, "<-");
-                        tokens.Add(token);
+                        tokens.Add(new(Type.Assign, "<-"));
                         i++;
                     }
                     else
                     {
-                        token = new(Type.Less, currentChar.ToString());
-                        tokens.Add(token);
+                        tokens.Add(new(Type.LessThan, currentChar.ToString()));
                     }
                     break;
                 case '>':
-                    if (input[i + 1] == '=')
+                    if (PeekNext(input, i, '='))
                     {
-                        token = new(Type.GreaterOrEqual, ">=");
-                        tokens.Add(token);
+                        tokens.Add(new(Type.GreaterOrEqualThan, ">="));
                         i++;
                     }
                     else
                     {
-                        token = new(Type.Greater, currentChar.ToString());
-                        tokens.Add(token);
+                        tokens.Add(new(Type.GreaterThan, currentChar.ToString()));
                     }
                     break;
                 case '=':
-                    if (input[i + 1] == '=')
+                    if (PeekNext(input, i, '='))
                     {
-                        token = new(Type.Equal, "==");
-                        tokens.Add(token);
+                        tokens.Add(new(Type.Equal, "=="));
                         i++;
                     }
                     else
                     {
-                        token = new(Type.Assign, currentChar.ToString());
-                        tokens.Add(token);
+                        tokens.Add(new(Type.Assign, currentChar.ToString()));
                     }
                     break;
                 case '!':
-                    if (input[i + 1] == '=')
+                    if (PeekNext(input, i, '='))
                     {
-                        token = new(Type.Equal, "!=");
-                        tokens.Add(token);
+                        tokens.Add(new(Type.NotEqual, "!="));
                         i++;
                     }
                     break;
                 case '(':
-                    token = new(Type.LeftBracket, currentChar.ToString());
-                    tokens.Add(token);
+                    tokens.Add(new(Type.LeftBracket, currentChar.ToString()));
                     break;
                 case ')':
-                    token = new(Type.RightBracket, currentChar.ToString());
-                    tokens.Add(token);
+                    tokens.Add(new(Type.RightBracket, currentChar.ToString()));
                     break;
                 case '[':
-                    token = new(Type.LeftSquareBracket, currentChar.ToString());
-                    tokens.Add(token);
+                    tokens.Add(new(Type.LeftSquareBracket, currentChar.ToString()));
                     break;
                 case ']':
-                    token = new(Type.RightSquareBracket, currentChar.ToString());
-                    tokens.Add(token);
+                    tokens.Add(new(Type.RightSquareBracketThan, currentChar.ToString()));
                     break;
                 case ',':
-                    token = new(Type.Comma, currentChar.ToString());
-                    tokens.Add(token);
+                    tokens.Add(new(Type.Comma, currentChar.ToString()));
                     break;
                 case '%':
-                    token = new(Type.Remainder, currentChar.ToString());
-                    tokens.Add(token);
+                    tokens.Add(new(Type.remainder, currentChar.ToString()));
                     break;
             }
         }
