@@ -24,11 +24,11 @@ public abstract class Expression<T> : IExpression<T>
 
 public abstract class BinaryExpre<T>(IExpression<T> left, IExpression<T> right) : Expression<T>
 {
-    public IExpression<T> Left { get; set; } = left;
-    public IExpression<T> Right { get; set; } = right;
+    public IExpression<T> LeftArgument { get; set; } = left;
+    public IExpression<T> RightArgument { get; set; } = right;
 }
 
-public abstract class UnaryArithExpre<T>(IExpression<T> value) : Expression<T>
+public abstract class UnaryExpre<T>(IExpression<T> value) : Expression<T>
 {
-    public IExpression<T> Value { get; set; } = value;
+    public IExpression<T> Argument { get; set; } = value;
 }

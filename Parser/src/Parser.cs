@@ -130,7 +130,7 @@ public class Parser
         Token token = tokens[tokenIndex++];
         if (token.Type == Type.Number)
         {
-            var node = new NumberExpre(int.Parse(token.Value));
+            var node = new IntegerExpre(int.Parse(token.Value));
             return GetDefaultExpre(node, out expre);
         }
         if (token.Type == Type.Identifier

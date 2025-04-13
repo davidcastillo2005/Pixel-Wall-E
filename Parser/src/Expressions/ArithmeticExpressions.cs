@@ -1,11 +1,11 @@
 namespace PixelWall_E.Parser.src.Expressions;
 
-public class NumberExpre(int num) : Expression<int>
+public class IntegerExpre(int i) : Expression<int>
 {
-    public int Num { get; set; } = num;
+    public int Integer { get; set; } = i;
     public override int Accept()
     {
-        return Num;
+        return Integer;
     }
 }
 
@@ -13,7 +13,7 @@ public class AdditionExpre(IExpression<int> left, IExpression<int> right) : Bina
 {
     public override int Accept()
     {
-        return Left.Accept() + Right.Accept();
+        return LeftArgument.Accept() + RightArgument.Accept();
     }
 }
 
@@ -21,7 +21,7 @@ public class SubtractionExpre(IExpression<int> left, IExpression<int> right) : B
 {
     public override int Accept()
     {
-        return Left.Accept() - Right.Accept();
+        return LeftArgument.Accept() - RightArgument.Accept();
     }
 }
 
@@ -29,7 +29,7 @@ public class MultiplicationExpre(IExpression<int> left, IExpression<int> right) 
 {
     public override int Accept()
     {
-        return Left.Accept() * Right.Accept();
+        return LeftArgument.Accept() * RightArgument.Accept();
     }
 }
 
@@ -37,7 +37,7 @@ public class DivisionExpre(IExpression<int> left, IExpression<int> right) : Bina
 {
     public override int Accept()
     {
-        return Left.Accept() / Right.Accept();
+        return LeftArgument.Accept() / RightArgument.Accept();
     }
 }
 
@@ -45,6 +45,6 @@ public class ExponentiationExpre(IExpression<int> left, IExpression<int> right) 
 {
     public override int Accept()
     {
-        return (int)Math.Pow(Left.Accept(), Right.Accept());
+        return (int)Math.Pow(LeftArgument.Accept(), RightArgument.Accept());
     }
 }

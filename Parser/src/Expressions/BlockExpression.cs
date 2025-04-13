@@ -10,6 +10,9 @@ public class BlockExpression(IExpression[] lines) : Expression
 
 public class AssignExpre<T>(string name, IExpression<T> value) : Expression
 {
+    public string Name { get; } = name;
+    public IExpression<T> Value { get; } = value;
+
     public override void Accept()
     {
     }
