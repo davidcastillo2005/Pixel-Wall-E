@@ -1,4 +1,4 @@
-namespace PixelWall_E.Parser.src.Expressions;
+namespace PixelWall_E.Parser.src.Expressions.Arithmetic;
 
 public class IntegerExpre(int i) : Expression<int>
 {
@@ -6,6 +6,14 @@ public class IntegerExpre(int i) : Expression<int>
     public override int Accept()
     {
         return Integer;
+    }
+}
+
+public class NegationExpre(IExpression<int> argument) : UnaryExpre<int>(argument)
+{
+    public override int Accept()
+    {
+        return -1 * Argument.Accept();
     }
 }
 

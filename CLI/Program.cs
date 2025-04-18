@@ -9,8 +9,9 @@ internal class Program
     {
         // try
         // {
-        Parser.src.Parser parser = new();
-        parser.Parse(Lexer.src.Lexer.ScanInput(Reader.src.Reader.ReadFile("C:\\Users\\Audiovisual1\\Documents\\Pixel Wall-E\\0.pw")!));
+        Parser.src.Parser.Parser parser = new();
+        var ast = parser.Parse(Lexer.src.Lexer.ScanInput(Reader.src.Reader.ReadFile("C:\\Users\\Audiovisual1\\Documents\\Pixel Wall-E\\0.pw")!));
+        ast.Accept();
         // }
         // catch (Exception e)
         // {

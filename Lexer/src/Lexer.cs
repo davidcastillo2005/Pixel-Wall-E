@@ -1,17 +1,6 @@
+using System.Text.RegularExpressions;
 namespace PixelWall_E.Lexer.src;
 
-public class Token(Type type, string value)
-{
-    public Type Type { get; } = type;
-    public string Value = value;
-}
-public enum Type
-{
-    Identifier, Keyword, Addition, Subtraction, Multiplication, Division,
-    Exponentiation, remainder, LeftBracket, RightBracket, LeftSquareBracket,
-    RightSquareBracketThan, LessOrEqualThan, GreaterOrEqualThan, LessThan,
-    GreaterThan, Equal, Number, Assign, Comma, Color, NewLine, NotEqual
-}
 public class Lexer
 {
     public static Token[] ScanInput(string input)
@@ -21,106 +10,33 @@ public class Lexer
         for (int i = 0; i < input.Length; i++)
         {
             char currentChar = input[i];
-            if (IsPartOfIdentifierOrNumber(currentChar))
-            {
-                temp += currentChar;
-            }
-            if (i == input.Length - 1 || temp != "")
+            if (currentChar == ' ')
+                continue;
+            if (temp != "" && !IsPartOfIdentifierOrNumber(currentChar, temp))
             {
                 ProcessTemp(ref temp, tokens);
             }
-            switch (currentChar)
+            var token = ProcessChar(input, currentChar, ref i);
+            if (token != null)
             {
-                case '\n':
-                    tokens.Add(new(Type.NewLine, "\\n"));
-                    i++;
-                    break;
-                case '+':
-                    tokens.Add(new(Type.Addition, currentChar.ToString()));
-                    break;
-                case '-' when temp == "":
-                    tokens.Add(new(Type.Subtraction, currentChar.ToString()));
-                    break;
-                case '/':
-                    tokens.Add(new(Type.Division, currentChar.ToString()));
-                    break;
-                case '*':
-                    if (PeekNext(input, i, '*'))
-                    {
-                        tokens.Add(new(Type.Exponentiation, "**"));
-                        i++;
-                    }
-                    else
-                    {
-                        tokens.Add(new(Type.Multiplication, currentChar.ToString()));
-                    }
-                    break;
-                case '<':
-                    if (PeekNext(input, i, '-'))
-                    {
-                        tokens.Add(new(Type.Assign, "<-"));
-                        i++;
-                    }
-                    else
-                    {
-                        tokens.Add(new(Type.LessThan, currentChar.ToString()));
-                    }
-                    break;
-                case '>':
-                    if (PeekNext(input, i, '='))
-                    {
-                        tokens.Add(new(Type.GreaterOrEqualThan, ">="));
-                        i++;
-                    }
-                    else
-                    {
-                        tokens.Add(new(Type.GreaterThan, currentChar.ToString()));
-                    }
-                    break;
-                case '=':
-                    if (PeekNext(input, i, '='))
-                    {
-                        tokens.Add(new(Type.Equal, "=="));
-                        i++;
-                    }
-                    else
-                    {
-                        tokens.Add(new(Type.Assign, currentChar.ToString()));
-                    }
-                    break;
-                case '!':
-                    if (PeekNext(input, i, '='))
-                    {
-                        tokens.Add(new(Type.NotEqual, "!="));
-                        i++;
-                    }
-                    break;
-                case '(':
-                    tokens.Add(new(Type.LeftBracket, currentChar.ToString()));
-                    break;
-                case ')':
-                    tokens.Add(new(Type.RightBracket, currentChar.ToString()));
-                    break;
-                case '[':
-                    tokens.Add(new(Type.LeftSquareBracket, currentChar.ToString()));
-                    break;
-                case ']':
-                    tokens.Add(new(Type.RightSquareBracketThan, currentChar.ToString()));
-                    break;
-                case ',':
-                    tokens.Add(new(Type.Comma, currentChar.ToString()));
-                    break;
-                case '%':
-                    tokens.Add(new(Type.remainder, currentChar.ToString()));
-                    break;
+                tokens.Add(token);
+                continue;
             }
+            temp += currentChar;
         }
+
+        if (temp != "")
+        {
+            ProcessTemp(ref temp, tokens);
+        }
+
+        tokens.Add(new Token(Type.EOF, "$"));
         return [.. tokens];
     }
 
-    private static bool IsPartOfIdentifierOrNumber(char c)
+    private static bool IsPartOfIdentifierOrNumber(char c, string temp)
     {
-        return char.IsLetterOrDigit(c) || c == '-';
+        return char.IsLetterOrDigit(c);
     }
 
     private static void ProcessTemp(ref string temp, List<Token> tokens)
@@ -134,10 +50,84 @@ public class Lexer
                 tokens.Add(new(Type.Color, temp));
                 break;
             default:
-                tokens.Add(char.IsDigit(temp[0]) ? new(Type.Number, temp) : new(Type.Identifier, temp));
+                tokens.Add(int.TryParse(temp, out _) ? new(Type.Number, temp) : new(Type.Identifier, temp));
                 break;
         }
         temp = "";
+    }
+
+    private static Token? ProcessChar(string input, char currentChar, ref int i)
+    {
+        switch (currentChar)
+        {
+            case '\n':
+                i++;
+                return new(Type.NewLine, "\\n");
+            case '+':
+                return new(Type.Addition, currentChar.ToString());
+            case '-':
+                return new(Type.Subtraction, currentChar.ToString());
+            case '/':
+                return new(Type.Division, currentChar.ToString());
+            case '*':
+                if (PeekNext(input, i, '*'))
+                {
+                    i++;
+                    return new(Type.Exponentiation, "**");
+                }
+                else
+                {
+                    return new(Type.Multiplication, currentChar.ToString());
+                }
+            case '<':
+                if (PeekNext(input, i, '-'))
+                {
+                    i++;
+                    return new(Type.Assign, "<-");
+                }
+                else
+                {
+                    return new(Type.LessThan, currentChar.ToString());
+                }
+            case '>':
+                if (PeekNext(input, i, '='))
+                {
+                    i++;
+                    return new(Type.GreaterOrEqualThan, ">=");
+                }
+                else
+                {
+                    return new(Type.GreaterThan, currentChar.ToString());
+                }
+            case '=':
+                if (PeekNext(input, i, '='))
+                {
+                    i++;
+                    return new(Type.Equal, "==");
+                }
+                return new(Type.Assign, currentChar.ToString());
+            case '!':
+                if (PeekNext(input, i, '='))
+                {
+                    i++;
+                    return new(Type.NotEqual, "!=");
+                }
+                return new(Type.Complement, "!");
+            case '(':
+                return new(Type.LeftBracket, currentChar.ToString());
+            case ')':
+                return new(Type.RightBracket, currentChar.ToString());
+            case '[':
+                return new(Type.LeftSquareBracket, currentChar.ToString());
+            case ']':
+                return new(Type.RightSquareBracketThan, currentChar.ToString());
+            case ',':
+                return new(Type.Comma, currentChar.ToString());
+            case '%':
+                return new(Type.Remainder, currentChar.ToString());
+            default:
+                return null;
+        }
     }
 
     private static bool PeekNext(string input, int i, char c)

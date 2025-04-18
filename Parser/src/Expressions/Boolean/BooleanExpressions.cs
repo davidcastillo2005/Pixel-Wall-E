@@ -1,4 +1,4 @@
-namespace PixelWall_E.Parser.src.Expressions;
+namespace PixelWall_E.Parser.src.Expressions.Boolean;
 
 public class BooleanLiteralExpre(bool b) : Expression<bool>
 {

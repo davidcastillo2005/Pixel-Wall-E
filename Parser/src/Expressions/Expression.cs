@@ -28,7 +28,7 @@ public abstract class BinaryExpre<T>(IExpression<T> left, IExpression<T> right) 
     public IExpression<T> RightArgument { get; set; } = right;
 }
 
-public abstract class UnaryExpre<T>(IExpression<T> value) : Expression<T>
+public abstract class UnaryExpre<T>(IExpression<T> argument) : Expression<T>
 {
-    public IExpression<T> Argument { get; set; } = value;
+    public IExpression<T> Argument { get; set; } = argument;
 }
