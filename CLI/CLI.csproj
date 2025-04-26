@@ -11,7 +11,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>PixelWall_E.CLI</RootNamespace>
+    <RootNamespace>PixelWallE.CLI</RootNamespace>
   </PropertyGroup>
 
 </Project>

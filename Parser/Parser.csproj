@@ -8,7 +8,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>PixelWall_E.Parser</RootNamespace>
+    <RootNamespace>PixelWallE.Parser</RootNamespace>
   </PropertyGroup>
 
 </Project>

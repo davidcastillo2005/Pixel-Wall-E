@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-namespace PixelWall_E.Lexer.src;
+namespace PixelWallE.Lexer.src;
 
 public class Lexer
 {
@@ -87,17 +87,17 @@ public class Lexer
                 }
                 else
                 {
-                    return new(Type.LessThan, currentChar.ToString());
+                    return new(Type.ExclusiveLess, currentChar.ToString());
                 }
             case '>':
                 if (PeekNext(input, i, '='))
                 {
                     i++;
-                    return new(Type.GreaterOrEqualThan, ">=");
+                    return new(Type.InclusiveGreater, ">=");
                 }
                 else
                 {
-                    return new(Type.GreaterThan, currentChar.ToString());
+                    return new(Type.ExclusiveGreater, currentChar.ToString());
                 }
             case '=':
                 if (PeekNext(input, i, '='))

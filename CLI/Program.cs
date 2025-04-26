@@ -1,7 +1,4 @@
-﻿using PixelWall_E.Lexer;
-using PixelWall_E.Parser;
-using PixelWall_E.Reader;
-namespace PixelWall_E.CLI;
+﻿namespace PixelWallE.CLI;
 
 internal class Program
 {

@@ -1,4 +1,4 @@
-namespace PixelWall_E.Reader.src;
+namespace PixelWallE.Reader.src;
 
 public class Reader
 {

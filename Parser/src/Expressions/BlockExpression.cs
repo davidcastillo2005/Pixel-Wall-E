@@ -1,8 +1,8 @@
-namespace PixelWall_E.Parser.src.Expressions;
+namespace PixelWallE.Parser.src.Expressions;
 
-public class BlockExpression(IExpression[] lines) : Expression
+public class BlockExpression(IInstruction[] lines) : Instruction
 {
-    public IExpression[] Lines { get; protected set; } = lines;
+    public IInstruction[] Lines { get; protected set; } = lines;
 
     public override void Accept()
     {
@@ -10,13 +10,13 @@ public class BlockExpression(IExpression[] lines) : Expression
     }
 }
 
-public class AssignExpre<T>(string name, IExpression<T> value) : Expression
+public class AssignExpre(string name, IExpression value) : Instruction
 {
     public string Name { get; } = name;
-    public IExpression<T> Value { get; } = value;
+    public IExpression Value { get; } = value;
 
     public override void Accept()
     {
-        Value.Accept();
+        var value = Value.Accept();
     }
 }
