@@ -1,9 +1,9 @@
 namespace PixelWallE.Parser.src.Expressions;
 
-public class LiteralExpre(ValueType value) : Expression
+public class LiteralExpre(Result value) : Expression
 {
-    public ValueType Value { get; set; } = value;
-    public override ValueType Accept()
+    public Result Value { get; set; } = value;
+    public override Result Accept()
     {
         return Value;
     }

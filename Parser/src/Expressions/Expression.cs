@@ -9,7 +9,7 @@ public interface IInstruction
 
 public interface IExpression : IInstruction
 {
-    new ValueType Accept();
+    new Result Accept();
 }
 
 public abstract class Instruction : IInstruction
@@ -19,7 +19,7 @@ public abstract class Instruction : IInstruction
 
 public abstract class Expression : IExpression
 {
-    public abstract ValueType Accept();
+    public abstract Result Accept();
 
     void IInstruction.Accept() => Accept();
 }
@@ -30,7 +30,7 @@ public class BinaryExpre(IExpression left, IExpression right, BinaryType opType)
     public IExpression RightArgument { get; set; } = right;
     public BinaryType OperatorType { get; set; } = opType;
 
-    public override ValueType Accept() => OperatorType switch
+    public override Result Accept() => OperatorType switch
     {
         BinaryType.Add => LeftArgument.Accept()! + RightArgument.Accept()!,
         BinaryType.Subtract => LeftArgument.Accept()! - RightArgument.Accept()!,
@@ -55,7 +55,7 @@ public class UnaryExpre(IExpression argument, UnaryType opType) : Expression
     public IExpression Argument { get; set; } = argument;
     public UnaryType OperatorType { get; set; } = opType;
 
-    public override ValueType Accept()
+    public override Result Accept()
     {
         throw new NotImplementedException();
     }

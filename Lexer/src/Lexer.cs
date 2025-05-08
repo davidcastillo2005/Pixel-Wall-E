@@ -13,9 +13,7 @@ public class Lexer
             if (currentChar == ' ')
                 continue;
             if (temp != "" && !IsPartOfIdentifierOrNumber(currentChar, temp))
-            {
                 ProcessTemp(ref temp, tokens);
-            }
             var token = ProcessChar(input, currentChar, ref i);
             if (token != null)
             {
@@ -26,9 +24,7 @@ public class Lexer
         }
 
         if (temp != "")
-        {
             ProcessTemp(ref temp, tokens);
-        }
 
         tokens.Add(new Token(Type.EOF, "$"));
         return [.. tokens];
@@ -85,20 +81,14 @@ public class Lexer
                     i++;
                     return new(Type.Assign, "<-");
                 }
-                else
-                {
-                    return new(Type.ExclusiveLess, currentChar.ToString());
-                }
+                return new(Type.Less, currentChar.ToString());
             case '>':
                 if (PeekNext(input, i, '='))
                 {
                     i++;
-                    return new(Type.InclusiveGreater, ">=");
+                    return new(Type.GreaterOrEqual, ">=");
                 }
-                else
-                {
-                    return new(Type.ExclusiveGreater, currentChar.ToString());
-                }
+                return new(Type.Greater, currentChar.ToString());
             case '=':
                 if (PeekNext(input, i, '='))
                 {
@@ -114,17 +104,17 @@ public class Lexer
                 }
                 return new(Type.Complement, "!");
             case '(':
-                return new(Type.LeftBracket, currentChar.ToString());
+                return new(Type.LeftCurly, currentChar.ToString());
             case ')':
-                return new(Type.RightBracket, currentChar.ToString());
+                return new(Type.RightCurly, currentChar.ToString());
             case '[':
-                return new(Type.LeftSquareBracket, currentChar.ToString());
+                return new(Type.LeftBracket, currentChar.ToString());
             case ']':
-                return new(Type.RightSquareBracketThan, currentChar.ToString());
+                return new(Type.RightBracket, currentChar.ToString());
             case ',':
                 return new(Type.Comma, currentChar.ToString());
             case '%':
-                return new(Type.Remainder, currentChar.ToString());
+                return new(Type.Modulus, currentChar.ToString());
             default:
                 return null;
         }

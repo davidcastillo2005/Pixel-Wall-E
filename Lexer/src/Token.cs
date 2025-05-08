@@ -9,8 +9,7 @@ public class Token(Type type, string value)
 public enum Type
 {
     Identifier, Keyword, Addition, Subtraction, Multiplication, Division,
-    Exponentiation, Remainder, LeftBracket, RightBracket, LeftSquareBracket,
-    RightSquareBracketThan, InclusiveLess, InclusiveGreater, ExclusiveLess,
-    ExclusiveGreater, Equal, Number, Boolean, Assign, Comma, Color, NewLine, NotEqual, And, Or, Complement, EOF,
-    Unknown
+    Exponentiation, Modulus, LeftCurly, RightCurly, LeftBracket, RightBracket,
+    LessOrEqual, GreaterOrEqual, Less, Greater, Equal, Number, Boolean, Assign,
+    Comma, Color, NewLine, NotEqual, And, Or, Complement, EOF, Unknown
 }
