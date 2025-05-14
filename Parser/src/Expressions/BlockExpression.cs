@@ -8,7 +8,10 @@ public class BlockExpression : Instruction
 
     public override void Accept(Context context)
     {
-        Array.ForEach(Lines, x => x.Accept(context));
+        for (int i = 0; i < Lines.Length; i++)
+        {
+            Lines[i].Accept(context);
+        }
     }
 }
 
