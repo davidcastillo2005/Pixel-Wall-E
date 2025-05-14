@@ -1,4 +1,6 @@
-﻿namespace PixelWallE.CLI;
+﻿using PixelWallE.Parser.src;
+
+namespace PixelWallE.CLI;
 
 internal class Program
 {
@@ -6,13 +8,32 @@ internal class Program
     {
         // try
         // {
+        // var tokens = Lexer.src.Lexer.Tokenize(Reader.src.Reader.ReadFile("C:\\Users\\Audiovisual1\\Documents\\Pixel Wall-E\\0.pw")!);
+        Reader.src.Reader reader = new();
+        Lexer.src.Lexer lexer = new();
         Parser.src.Parser.Parser parser = new();
-        var ast = parser.Parse(Lexer.src.Lexer.ScanInput(Reader.src.Reader.ReadFile("C:\\Users\\Audiovisual1\\Documents\\Pixel Wall-E\\0.pw")!));
-        ast.Accept();
+        Context context = new(
+        new Dictionary<string, Func<dynamic[], dynamic>>()
+        {
+        {"Func", Func}
+        },
+        []);
+
+        var input = reader.ReadFile(@"C:\Users\Audiovisual1\Documents\Pixel Wall-E\0.pw");
+        var tokens = lexer.Tokenize(input!);
+        var ast = parser.Parse(tokens);
+
+        ast.Accept(context);
+
         // }
         // catch (Exception e)
-        // {
+        // {    
         //     Console.WriteLine($"Error: {e}");
         // }
+    }
+
+    private static dynamic Func(dynamic[] @params)
+    {
+        return @params[0] == @params[1].ToString();
     }
 }

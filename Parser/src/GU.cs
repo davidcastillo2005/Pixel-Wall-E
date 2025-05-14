@@ -1,0 +1,1 @@
+global using TokenType = PixelWallE.Lexer.src.Type;

@@ -1,12 +1,14 @@
 namespace PixelWallE.Parser.src.Expressions;
 
-public class BlockExpression(IInstruction[] lines) : Instruction
+public class BlockExpression : Instruction
 {
-    public IInstruction[] Lines { get; protected set; } = lines;
+    public IInstruction[] Lines { get; protected set; }
 
-    public override void Accept()
+    public BlockExpression(IInstruction[] lines) => Lines = lines;
+
+    public override void Accept(Context context)
     {
-        Array.ForEach(Lines, x => x.Accept());
+        Array.ForEach(Lines, x => x.Accept(context));
     }
 }
 
@@ -15,8 +17,8 @@ public class AssignExpre(string name, IExpression value) : Instruction
     public string Name { get; } = name;
     public IExpression Value { get; } = value;
 
-    public override void Accept()
+    public override void Accept(Context context)
     {
-        var value = Value.Accept();
+        context.Variables[Name] = Value.Accept(context);
     }
 }

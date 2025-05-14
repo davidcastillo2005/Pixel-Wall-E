@@ -2,7 +2,7 @@ namespace PixelWallE.Reader.src;
 
 public class Reader
 {
-    public static string? ReadFile(string filePath)
+    public string? ReadFile(string filePath)
     {
         try
         {

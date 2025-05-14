@@ -5,16 +5,16 @@ namespace PixelWallE.Parser.src;
 
 public class Result : IParsable<Result>
 {
-    object? Value { get; set; }
-    Type Type { get; set; }
+    public object? Value { get; set; }
+    public Type Type { get; set; }
 
-    private Result(object? value)
+    public Result(object? value)
     {
         Value = value;
         Type = value?.GetType() ?? typeof(object);
     }
 
-    private Result(object? value, Type type)
+    public Result(object? value, Type type)
     {
         Value = value;
         Type = type;
@@ -38,27 +38,27 @@ public class Result : IParsable<Result>
     // public static Result ExecuteOp(string op, params Result[] values)
     //     => ExecuteOp(op, [.. values.Select(x => x.Value)], [.. values.Select(x => x.Type)]);
 
-    public static Result operator +(Result a, Result b) => new ((dynamic)a.Value! + (dynamic)b.Value!);
-    public static Result operator -(Result a, Result b) => new ((dynamic)a.Value! - (dynamic)b.Value!);
-    public static Result operator *(Result a, Result b) => new ((dynamic)a.Value! * (dynamic)b.Value!);
-    public static Result operator /(Result a, Result b) => new ((dynamic)a.Value! / (dynamic)b.Value!);
-    public static Result operator %(Result a, Result b) => new ((dynamic)a.Value! % (dynamic)b.Value!);
-    public static Result operator &(Result a, Result b) => new ((dynamic)a.Value! & (dynamic)b.Value!);
-    public static Result operator |(Result a, Result b) => new ((dynamic)a.Value! | (dynamic)b.Value!);
+    public static Result operator +(Result a, Result b) => new((dynamic)a.Value! + (dynamic)b.Value!);
+    public static Result operator -(Result a, Result b) => new((dynamic)a.Value! - (dynamic)b.Value!);
+    public static Result operator *(Result a, Result b) => new((dynamic)a.Value! * (dynamic)b.Value!);
+    public static Result operator /(Result a, Result b) => new((dynamic)a.Value! / (dynamic)b.Value!);
+    public static Result operator %(Result a, Result b) => new((dynamic)a.Value! % (dynamic)b.Value!);
+    public static Result operator &(Result a, Result b) => new((dynamic)a.Value! & (dynamic)b.Value!);
+    public static Result operator |(Result a, Result b) => new((dynamic)a.Value! | (dynamic)b.Value!);
     public static Result operator ^(Result a, Result b)
     {
         if (a.Value is double castedA && b.Value is double castedB)
             return new Result(Math.Pow(castedA, castedB), a.Type);
         throw new Exception();
     }
-    public static Result operator ==(Result a, Result b) => new ((dynamic)a.Value! == (dynamic)b.Value!);
-    public static Result operator !=(Result a, Result b) => new ((dynamic)a.Value! != (dynamic)b.Value!);
-    public static Result operator <(Result a, Result b) => new ((dynamic)a.Value! < (dynamic)b.Value!);
-    public static Result operator <=(Result a, Result b) => new ((dynamic)a.Value! <= (dynamic)b.Value!);
-    public static Result operator >(Result a, Result b) => new ((dynamic)a.Value! > (dynamic)b.Value!);
-    public static Result operator >=(Result a, Result b) => new ((dynamic)a.Value! >= (dynamic)b.Value!);
-    public static Result operator -(Result a) => new (-(dynamic)a.Value!);
-    public static Result operator !(Result a) => new (!(dynamic)a.Value!);
+    public static Result operator ==(Result a, Result b) => new((dynamic)a.Value! == (dynamic)b.Value!);
+    public static Result operator !=(Result a, Result b) => new((dynamic)a.Value! != (dynamic)b.Value!);
+    public static Result operator <(Result a, Result b) => new((dynamic)a.Value! < (dynamic)b.Value!);
+    public static Result operator <=(Result a, Result b) => new((dynamic)a.Value! <= (dynamic)b.Value!);
+    public static Result operator >(Result a, Result b) => new((dynamic)a.Value! > (dynamic)b.Value!);
+    public static Result operator >=(Result a, Result b) => new((dynamic)a.Value! >= (dynamic)b.Value!);
+    public static Result operator -(Result a) => new(-(dynamic)a.Value!);
+    public static Result operator !(Result a) => new(!(dynamic)a.Value!);
 
     public override bool Equals(object? obj)
         => ReferenceEquals(obj, this)
