@@ -323,6 +323,20 @@ public class Parser
     private static bool TryAssignExpre(string name, IExpression value, out IInstruction expre)
         => GetDefaultExpre(new AssignExpre(name, value), out expre);
 
+    private bool MatchToken(Token[] tokens, TokenType[] types, out TokenType? matchedType)
+    {
+        foreach (var item in types)
+        {
+            if (tokens[tokenIndex].Type == item)
+            {
+                matchedType = item;
+                return true;
+            }
+        }
+        matchedType = null;
+        return false;
+    }
+
     private bool MatchToken<T>(Token[] tokens, T type)
     {
         switch (type)
