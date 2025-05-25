@@ -19,10 +19,12 @@ internal class Program
         },
         []);
 
+
         var input = reader.ReadFile(@"C:\Users\Audiovisual1\Documents\Pixel Wall-E\0.pw");
         var tokens = lexer.Tokenize(input!);
         var ast = parser.Parse(tokens);
 
+        ast.SearchLabel(context);
         ast.Accept(context);
 
         // }
@@ -34,6 +36,6 @@ internal class Program
 
     private static dynamic Func(dynamic[] @params)
     {
-        return @params[0] == @params[1].ToString();
+        return @params[0] == @params[1];
     }
 }

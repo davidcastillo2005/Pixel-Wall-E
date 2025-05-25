@@ -20,23 +20,14 @@ public class Result : IParsable<Result>
         Type = type;
     }
 
-    // private static Result ExecuteOp(string op, object?[] values, Type[] types)
-    // {
-    //     var flags = BindingFlags.Public | BindingFlags.Static;
-    //     MethodInfo? method = types
-    //         .SelectMany(m => m.GetMethods(flags))
-    //         .FirstOrDefault(m =>
-    //             m.Name == op &&
-    //             m.GetParameters()
-    //                 .Select(p => p.ParameterType)
-    //                 .SequenceEqual(types)
-    //         );
-    //     var result = method!.Invoke(null, values);
-    //     return new Result(result, method.ReturnType);
-    // }
+    // TODO Implementar extension para llevar de un Result de Value booleano a bool.
 
-    // public static Result ExecuteOp(string op, params Result[] values)
-    //     => ExecuteOp(op, [.. values.Select(x => x.Value)], [.. values.Select(x => x.Type)]);
+    public bool ToBoolean()
+    {
+        if (Value is not null && Value is bool BValue)
+            return BValue;
+        throw new Exception();
+    }
 
     public static Result operator +(Result a, Result b) => new((dynamic)a.Value! + (dynamic)b.Value!);
     public static Result operator -(Result a, Result b) => new((dynamic)a.Value! - (dynamic)b.Value!);

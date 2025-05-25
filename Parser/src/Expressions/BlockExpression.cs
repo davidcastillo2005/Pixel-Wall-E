@@ -11,6 +11,19 @@ public class BlockExpression : Instruction
         for (int i = 0; i < Lines.Length; i++)
         {
             Lines[i].Accept(context);
+            if (context.IsJumping)
+            {
+                i = context.Labels[context.TargetLabel!];
+                context.EndJump();
+            }
+        }
+    }
+
+    public override void SearchLabel(Context context)
+    {
+        for (int i = 0; i < Lines.Length; i++)
+        {
+            Lines[i].SearchLabel(context);
         }
     }
 }

@@ -6,7 +6,14 @@ public class Lexer
 
     private List<Token> tokens = [];
 
-    private delegate bool IsIntOrId(string input, int startIndex);
+    private delegate bool IsIntOrId(string source, int startIndex);
+
+    private readonly Dictionary<string, Type> keyword = new Dictionary<string, Type>
+    {
+        {"GoTo", Type.GoTo},
+        {"false", Type.Boolean},
+        {"true", Type.Boolean},
+    };
 
     private readonly List<(string symbol, Type token)> symbols =
     [
@@ -42,7 +49,7 @@ public class Lexer
     private bool TryGetNewLineToken(string input, out Token? token)
     {
         int startIndex = InputIndex;
-        if (MatchPattern(input, "\n") || MatchPattern(input, "\\n"))
+        if (MatchPattern(input, "\n") || MatchPattern(input, "\r\n"))
         {
             token = new Token(Type.NewLine, "\n");
             return true;
@@ -80,7 +87,7 @@ public class Lexer
 
     private bool TryGetIntToken(string input, out Token? token)
     {
-        if (TryGetIntOrId(input, IsInterger, out string? i))
+        if (TryGetIntOrIdOrKey(input, IsInterger, out string? i))
         {
             token = new Token(Type.Interger, i!);
             return true;
@@ -97,9 +104,11 @@ public class Lexer
 
     private bool TryGetIdentifier(string input, out Token? token)
     {
-        if (TryGetIntOrId(input, IsIdentifier, out string? name))
+        if (TryGetIntOrIdOrKey(input, IsIdentifier, out string? value))
         {
-            token = new Token(Type.Identifier, name!);
+            var isKeyword = keyword.TryGetValue(value!, out Type keywordType);
+            var type = isKeyword ? keywordType : Type.Identifier;
+            token = new Token(type, value!);
             return true;
         }
         return ResetToken(InputIndex, out token);
@@ -145,7 +154,7 @@ public class Lexer
 
     #region Tools
 
-    private bool TryGetIntOrId(string input, IsIntOrId isIntOrId, out string? tokenValue)
+    private bool TryGetIntOrIdOrKey(string input, IsIntOrId isIntOrId, out string? tokenValue)
     {
         int startIndex = InputIndex;
         string temp = "";

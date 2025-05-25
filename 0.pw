@@ -1,2 +1,5 @@
-x <- "(4 + 3)"
+x <- 6
+NIcaragua
+x <- x - 1
+GoTo [NIcaragua] (x != 0)
 y <- Func ( x , 5 + 6 )

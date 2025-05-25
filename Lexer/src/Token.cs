@@ -17,5 +17,5 @@ public enum Type
     Exponentiation, Modulus, String
     , LeftCurly, RightCurly, LeftBracket, RightBracket,
     LessOrEqual, GreaterOrEqual, Less, Greater, Equal, Interger, Boolean, Assign,
-    Comma, Color, NewLine, NotEqual, And, Or, Not, EOF, Unknown
+    Comma, Color, NewLine, NotEqual, And, Or, Not, EOF, Unknown, GoTo, False, True
 }

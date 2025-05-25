@@ -1,13 +1,19 @@
+using System.Runtime.Serialization;
 using PixelWallE.Parser.src.Enums;
 
 namespace PixelWallE.Parser.src.Expressions;
 
-public interface IInstruction
+public interface ISearch
+{
+    void SearchLabel(Context context);
+}
+
+public interface IInstruction : ISearch
 {
     void Accept(Context context);
 }
 
-public interface IExpression : IInstruction
+public interface IExpression : IInstruction, ISearch
 {
     new Result Accept(Context context);
 }
@@ -15,6 +21,8 @@ public interface IExpression : IInstruction
 public abstract class Instruction : IInstruction
 {
     public abstract void Accept(Context context);
+
+    public virtual void SearchLabel(Context context) { }
 }
 
 public abstract class Expression : IExpression
@@ -25,6 +33,8 @@ public abstract class Expression : IExpression
     {
         Accept(context);
     }
+
+    public virtual void SearchLabel(Context context) { }
 }
 
 public class BinaryExpre(IExpression left, IExpression right, BinaryType opType) : Expression
@@ -104,5 +114,37 @@ public class CallableExpre(string name, IExpression[] parameters) : Expression
 
         var result = context.Functions[Name](objects);
         return new Result(result);
+    }
+}
+
+public class LabelInst(string value, int index) : Instruction
+{
+    public string Value { get; set; } = value;
+    public int Index { get; } = index;
+
+    public override void Accept(Context context) { }
+
+    public override void SearchLabel(Context context)
+    {
+        context.Labels[Value] = Index;
+    }
+}
+
+//TODO Crear metodo alternativo donde uso la extension que lleva de Result a bool para mayor legibilidad
+
+public class GoToInst(string targetLabel, IExpression? condition) : Instruction
+{
+    public string TargetLabel { get; } = targetLabel;
+    public IExpression? Condition { get; } = condition;
+
+    public override void Accept(Context context)
+    {
+        if (Condition is not null)
+        {
+            bool cond = Condition.Accept(context).ToBoolean();
+            if (!cond)
+                return;
+        }
+        context.Jump(TargetLabel);
     }
 }

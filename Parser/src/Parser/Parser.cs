@@ -31,13 +31,59 @@ public class Parser
         bool ReadLine;
         do
         {
+            //TODO Cambiar el nombre a todos loa AssignExpre a AssignInst.
+            //TODO Cambiar todas los nombres expression a instruction.
+
             if (ReadLine = TryGetAssignExpre(tokens, out IInstruction? lineExpre)
-                || TryGetFunctionExpre(tokens, out lineExpre))
+                || TryGetGoToInstr(tokens, out lineExpre)
+                || TryGetFunctionExpre(tokens, out lineExpre)
+                || TryGetLabelInst(expressions.Count, tokens, out lineExpre))
+            {
                 expressions.Add(lineExpre!);
+                continue;
+            }
+            ReadLine = MatchToken(tokens, TokenType.NewLine);
         } while (ReadLine);
 
         BlockExpression node = new([.. expressions]);
         return GetDefaultExpre(node, out expre);
+    }
+
+    private bool TryGetGoToInstr(Token[] tokens, out IInstruction? lineExpre)
+    {
+        int startIndex = tokenIndex;
+        //TODO Crear MatchToken para listas de token.
+        if (MatchToken(tokens, TokenType.GoTo)
+            && MatchToken(tokens, TokenType.LeftBracket)
+            && MatchToken(tokens, TokenType.Identifier)
+            && MatchToken(tokens, TokenType.RightBracket))
+        {
+            var valueIndex = tokenIndex - 2;
+            string targetLabel = tokens[valueIndex].Value;
+            Instruction instr;
+            if (MatchToken(tokens, TokenType.LeftCurly)
+                && TryParseBooleanExpre(tokens, out IExpression cond)
+                && MatchToken(tokens, TokenType.RightCurly))
+            {
+                instr = new GoToInst(targetLabel, cond);
+            }
+            else
+            {
+                instr = new GoToInst(targetLabel, null);
+            }
+            return GetDefaultExpre(instr, out lineExpre);
+        }
+        return ResetExpre(startIndex, out lineExpre);
+    }
+
+    private bool TryGetLabelInst(int lineIndex, Token[] tokens, out IInstruction? lineExpre)
+    {
+        int startIndex = tokenIndex;
+        string value = tokens[tokenIndex].Value;
+        if (!MatchToken(tokens, TokenType.Identifier) || !MatchToken(tokens, TokenType.NewLine))
+            return ResetExpre(startIndex, out lineExpre);
+        Instruction instr = new LabelInst(value, lineIndex);
+        return GetDefaultExpre(instr, out lineExpre);
     }
 
     private bool TryGetAssignExpre(Token[] tokens, out IInstruction? expre)
@@ -162,7 +208,7 @@ public class Parser
 
     #endregion
 
-    #region strings
+    #region Strings
 
     private bool TryParseStringExpre(Token[] tokens, out IExpression? expre)
         => TryGetLiteral(tokens, LiteralType.String, null, out expre);
