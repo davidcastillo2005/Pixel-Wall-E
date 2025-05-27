@@ -20,12 +20,10 @@ public class Result : IParsable<Result>
         Type = type;
     }
 
-    // TODO Implementar extension para llevar de un Result de Value booleano a bool.
-
-    public bool ToBoolean()
+    public bool ToBool()
     {
-        if (Value is not null && Value is bool BValue)
-            return BValue;
+        if (Value is not null && Value is bool b)
+            return b;
         throw new Exception();
     }
 

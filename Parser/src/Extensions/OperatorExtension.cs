@@ -4,63 +4,63 @@ namespace PixelWallE.Parser.src.Extensions;
 
 public static class OperatorExtension
 {
-    public static BinaryType ToBinaryType(this TokenType type) => type switch
+    public static BinaryOps ToBinaryType(this TokenType type) => type switch
     {
-        TokenType.Plus => BinaryType.Add,
-        TokenType.Minus => BinaryType.Subtract,
-        TokenType.Multiplication => BinaryType.Multiply,
-        TokenType.Division => BinaryType.Divide,
-        TokenType.Exponentiation => BinaryType.Power,
-        TokenType.Modulus => BinaryType.Modulus,
-        TokenType.LessOrEqual => BinaryType.LessOrEqualThan,
-        TokenType.GreaterOrEqual => BinaryType.GreaterOrEqualThan,
-        TokenType.Less => BinaryType.LessThan,
-        TokenType.Greater => BinaryType.GreaterThan,
-        TokenType.Equal => BinaryType.Equal,
-        TokenType.NotEqual => BinaryType.NotEqual,
-        TokenType.And => BinaryType.And,
-        TokenType.Or => BinaryType.Or,
+        TokenType.Plus => BinaryOps.Add,
+        TokenType.Minus => BinaryOps.Subtract,
+        TokenType.Multiplication => BinaryOps.Multiply,
+        TokenType.Division => BinaryOps.Divide,
+        TokenType.Exponentiation => BinaryOps.Power,
+        TokenType.Modulus => BinaryOps.Modulus,
+        TokenType.LessOrEqual => BinaryOps.LessOrEqualThan,
+        TokenType.GreaterOrEqual => BinaryOps.GreaterOrEqualThan,
+        TokenType.Less => BinaryOps.LessThan,
+        TokenType.Greater => BinaryOps.GreaterThan,
+        TokenType.Equal => BinaryOps.Equal,
+        TokenType.NotEqual => BinaryOps.NotEqual,
+        TokenType.And => BinaryOps.And,
+        TokenType.Or => BinaryOps.Or,
         _ => throw new Exception(),
     };
 
-    public static TokenType ToTokenType(this BinaryType op) => op switch
+    public static TokenType ToTokenType(this BinaryOps op) => op switch
     {
-        BinaryType.Add => TokenType.Plus,
-        BinaryType.Subtract => TokenType.Minus,
-        BinaryType.Multiply => TokenType.Multiplication,
-        BinaryType.Divide => TokenType.Division,
-        BinaryType.Modulus => TokenType.Modulus,
-        BinaryType.Power => TokenType.Exponentiation,
-        BinaryType.LessOrEqualThan => TokenType.LessOrEqual,
-        BinaryType.LessThan => TokenType.Less,
-        BinaryType.GreaterOrEqualThan => TokenType.GreaterOrEqual,
-        BinaryType.GreaterThan => TokenType.Greater,
-        BinaryType.Equal => TokenType.Equal,
-        BinaryType.NotEqual => TokenType.NotEqual,
-        BinaryType.And => TokenType.And,
-        BinaryType.Or => TokenType.Or,
+        BinaryOps.Add => TokenType.Plus,
+        BinaryOps.Subtract => TokenType.Minus,
+        BinaryOps.Multiply => TokenType.Multiplication,
+        BinaryOps.Divide => TokenType.Division,
+        BinaryOps.Modulus => TokenType.Modulus,
+        BinaryOps.Power => TokenType.Exponentiation,
+        BinaryOps.LessOrEqualThan => TokenType.LessOrEqual,
+        BinaryOps.LessThan => TokenType.Less,
+        BinaryOps.GreaterOrEqualThan => TokenType.GreaterOrEqual,
+        BinaryOps.GreaterThan => TokenType.Greater,
+        BinaryOps.Equal => TokenType.Equal,
+        BinaryOps.NotEqual => TokenType.NotEqual,
+        BinaryOps.And => TokenType.And,
+        BinaryOps.Or => TokenType.Or,
         _ => throw new Exception(),
     };
 
-    public static TokenType ToTokenType(this UnaryType op) => op switch
+    public static TokenType ToTokenType(this UnaryOps op) => op switch
     {
-        UnaryType.Negative => TokenType.Minus,
-        UnaryType.Not => TokenType.Not,
+        UnaryOps.Negative => TokenType.Minus,
+        UnaryOps.Not => TokenType.Not,
         _ => throw new Exception(),
     };
 
-    public static TokenType ToTokenType(this LiteralType literal) => literal switch
+    public static TokenType ToTokenType(this Literals literal) => literal switch
     {
-        LiteralType.Boolean => TokenType.Boolean,
-        LiteralType.String => TokenType.String,
-        LiteralType.Integer => TokenType.Interger,
+        Literals.Boolean => TokenType.Boolean,
+        Literals.String => TokenType.String,
+        Literals.Integer => TokenType.Interger,
         _ => throw new Exception(),
     };
 
-    public static UnaryType ToUnaryType(this TokenType type) => type switch
+    public static UnaryOps ToUnaryType(this TokenType type) => type switch
     {
-        TokenType.Minus => UnaryType.Negative,
-        TokenType.Not => UnaryType.Not,
+        TokenType.Minus => UnaryOps.Negative,
+        TokenType.Not => UnaryOps.Not,
         _ => throw new Exception(),
     };
 }

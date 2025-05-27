@@ -2,15 +2,3 @@ C:\Users\Audiovisual1\Documents\Pixel Wall-E\VSCode\Lexer\obj\Debug\net9.0\Lexer
 C:\Users\Audiovisual1\Documents\Pixel Wall-E\VSCode\Lexer\obj\Debug\net9.0\Lexer.AssemblyInfoInputs.cache
 C:\Users\Audiovisual1\Documents\Pixel Wall-E\VSCode\Lexer\obj\Debug\net9.0\Lexer.AssemblyInfo.cs
 C:\Users\Audiovisual1\Documents\Pixel Wall-E\VSCode\Lexer\obj\Debug\net9.0\Lexer.csproj.CoreCompileInputs.cache
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\obj\Debug\net9.0\Lexer.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\obj\Debug\net9.0\Lexer.AssemblyInfoInputs.cache
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\obj\Debug\net9.0\Lexer.AssemblyInfo.cs
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\obj\Debug\net9.0\Lexer.csproj.CoreCompileInputs.cache
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\bin\Debug\net9.0\Lexer.deps.json
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\bin\Debug\net9.0\Lexer.dll
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\bin\Debug\net9.0\Lexer.pdb
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\obj\Debug\net9.0\Lexer.dll
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\obj\Debug\net9.0\refint\Lexer.dll
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\obj\Debug\net9.0\Lexer.pdb
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\Lexer\obj\Debug\net9.0\ref\Lexer.dll
-C:\Users\Audiovisual1\Documents\Pixel Wall-E\lexer\obj\Debug\net9.0\Lexer.sourcelink.json
