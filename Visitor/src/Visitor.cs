@@ -2,6 +2,8 @@
 using PixelWallE.Parser.src.AST;
 namespace PixelWallE.Visitor.src;
 
+//TODO Hacer un IVisitor y Visitor para cada node del AST.
+
 public interface IVisitor
 {
     void Visit(StatementNode node);
