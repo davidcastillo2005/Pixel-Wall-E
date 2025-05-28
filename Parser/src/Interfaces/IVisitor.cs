@@ -12,7 +12,7 @@ public interface IVisitor
     Result FuncVisit(string identifier, Result[] arguments);
     Result VariableVisit(string identifier);
     Result BinaryVisit(Result left, BinaryOperation op, Result right);
-    Result UnaryVisit(Result argument, UnaryOps op);
+    Result UnaryVisit(Result argument, UnaryOperation op);
     Result LiteralVisit(Result value);
     Result[] ParamsVisit(IExpression[] expressions);
 }

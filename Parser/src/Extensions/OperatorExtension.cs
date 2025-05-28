@@ -43,25 +43,25 @@ public static class OperatorExtension
         _ => throw new Exception(),
     };
 
-    public static TokenType ToTokenType(this UnaryOps op) => op switch
+    public static TokenType ToTokenType(this UnaryOperation op) => op switch
     {
-        UnaryOps.Negative => TokenType.Minus,
-        UnaryOps.Not => TokenType.Not,
+        UnaryOperation.Negative => TokenType.Minus,
+        UnaryOperation.Not => TokenType.Not,
         _ => throw new Exception(),
     };
 
-    public static TokenType ToTokenType(this Literals literal) => literal switch
+    public static TokenType ToTokenType(this Literal literal) => literal switch
     {
-        Literals.Boolean => TokenType.Boolean,
-        Literals.String => TokenType.String,
-        Literals.Integer => TokenType.Interger,
+        Literal.Boolean => TokenType.Boolean,
+        Literal.String => TokenType.String,
+        Literal.Integer => TokenType.Interger,
         _ => throw new Exception(),
     };
 
-    public static UnaryOps ToUnaryType(this TokenType type) => type switch
+    public static UnaryOperation ToUnaryType(this TokenType type) => type switch
     {
-        TokenType.Minus => UnaryOps.Negative,
-        TokenType.Not => UnaryOps.Not,
+        TokenType.Minus => UnaryOperation.Negative,
+        TokenType.Not => UnaryOperation.Not,
         _ => throw new Exception(),
     };
 }

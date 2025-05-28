@@ -193,7 +193,7 @@ public class Parser
     private bool TryGetPow(Token[] tokens, out IExpression? expre)
         => TryShiftBinaryExpre(tokens, TryGetNum, out expre, [TokenType.Exponentiation]);
     private bool TryGetNum(Token[] tokens, out IExpression? expre)
-        => TryGetLiteral(tokens, Literals.Integer, TryParseArithExpre, out expre);
+        => TryGetLiteral(tokens, Literal.Integer, TryParseArithExpre, out expre);
 
     #endregion
 
@@ -225,14 +225,14 @@ public class Parser
         => TryShifttUnaryExpre(tokens, TryGetBool, out expre, [TokenType.Not]);
 
     private bool TryGetBool(Token[] tokens, out IExpression? expre) =>
-        TryGetLiteral(tokens, Literals.Boolean, TryParseBooleanExpre, out expre);
+        TryGetLiteral(tokens, Literal.Boolean, TryParseBooleanExpre, out expre);
 
     #endregion
 
     #region Strings
 
     private bool TryParseStringExpre(Token[] tokens, out IExpression? expre)
-        => TryGetLiteral(tokens, Literals.String, null, out expre);
+        => TryGetLiteral(tokens, Literal.String, null, out expre);
 
     #endregion
 
@@ -297,7 +297,7 @@ public class Parser
         return ResetTokenIndex(startIndex, out expre);
     }
 
-    private bool TryGetLiteral(Token[] tokens, Literals literalType, TryGetFunc? tryGetFunc, out IExpression? expre)
+    private bool TryGetLiteral(Token[] tokens, Literal literalType, TryGetFunc? tryGetFunc, out IExpression? expre)
     {
         int startIndex = tokenIndex;
         IExpression? result;
@@ -358,11 +358,11 @@ public class Parser
                 if (tokens[tokenIndex].Type != binOp.ToTokenType())
                     return false;
                 break;
-            case UnaryOps unaOp:
+            case UnaryOperation unaOp:
                 if (tokens[tokenIndex].Type != unaOp.ToTokenType())
                     return false;
                 break;
-            case Literals lit:
+            case Literal lit:
                 if (tokens[tokenIndex].Type != lit.ToTokenType())
                     return false;
                 break;

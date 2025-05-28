@@ -14,10 +14,10 @@ public class BinaryExpreNode(IExpression left, IExpression right, BinaryOperatio
     }
 }
 
-public class UnaryExpreNode(IExpression argument, UnaryOps opType) : IExpression
+public class UnaryExpreNode(IExpression argument, UnaryOperation opType) : IExpression
 {
     public IExpression Argument { get; set; } = argument;
-    public UnaryOps OperatorType { get; set; } = opType;
+    public UnaryOperation OperatorType { get; set; } = opType;
 
     public Result Accept(IVisitor visitor)
     {

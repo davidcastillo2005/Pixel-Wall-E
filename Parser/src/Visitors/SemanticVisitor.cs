@@ -112,7 +112,7 @@ public class SemanticVisitor(Context context) : IVisitor
         return [.. results];
     }
 
-    public Result UnaryVisit(Result argument, UnaryOps op)
+    public Result UnaryVisit(Result argument, UnaryOperation op)
     {
         if (HasNullResult(argument))
         {
@@ -121,7 +121,7 @@ public class SemanticVisitor(Context context) : IVisitor
         }
         else if (argument.Value is int argInt)
         {
-            if (op == UnaryOps.Not)
+            if (op == UnaryOperation.Not)
             {
                 AddException($"Cannot perform {op} operation on an integer.");
                 return NullResult();

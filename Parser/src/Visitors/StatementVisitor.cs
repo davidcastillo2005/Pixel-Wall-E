@@ -79,7 +79,7 @@ public abstract class StatementVisitor(Context context) : IVisitor
         return value;
     }
 
-    public Result UnaryVisit(Result argument, UnaryOps op)
+    public Result UnaryVisit(Result argument, UnaryOperation op)
     {
         throw new NotImplementedException();
     }
