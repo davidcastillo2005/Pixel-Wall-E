@@ -61,7 +61,7 @@ public class Parser
         {
             var valueIndex = tokenIndex - 2;
             string targetLabel = tokens[valueIndex].Value;
-            Statement instr;
+            IStatement instr;
             if (TryMatchToken(tokens, TokenType.LeftCurly)
                 && TryParseBooleanExpre(tokens, out IExpression cond)
                 && TryMatchToken(tokens, TokenType.RightCurly))
@@ -83,7 +83,7 @@ public class Parser
         string value = tokens[tokenIndex].Value;
         if (!TryMatchAllTokens(tokens, [TokenType.Identifier, TokenType.NewLine]))
             return ResetTokenIndex(startIndex, out lineExpre);
-        Statement instr = new LabelStmnt(value, lineIndex);
+        IStatement instr = new LabelStmnt(value, lineIndex);
         return GetDefaultExpre(instr, out lineExpre);
     }
 
@@ -114,16 +114,37 @@ public class Parser
 
     #region Methods
 
-    private bool TryParseFunction(Token[] tokens, out IExpression? expre, string name)
+    private bool TryParseMethod(Token[] tokens, out IExpression[]? parameters)
     {
         int startIndex = tokenIndex;
-        if (TryMatchAllTokens(tokens, [TokenType.Identifier, TokenType.LeftCurly])
-            && TryGetParams(tokens, out IExpression[]? parameters))
+        if (!TryMatchAllTokens(tokens, [TokenType.Identifier, TokenType.LeftCurly])
+            || !TryGetParams(tokens, out parameters))
         {
-            expre = new Function(name, parameters!);
+            return ResetTokenIndex(startIndex, out parameters);
+        }
+        return true;
+    }
+
+    private bool GetNewAction(Token[] tokens, out IStatement? statement)
+    {
+        string identifier = tokens[tokenIndex].Value;
+        if (TryParseMethod(tokens, out IExpression[]? parameters))
+        {
+            statement = new AST.Action(identifier, parameters!);
             return true;
         }
-        return ResetTokenIndex(startIndex, out expre);
+        return ResetTokenIndex(tokenIndex, out statement);
+    }
+
+    private bool GetNewFunction(Token[] tokens, out IExpression? expre)
+    {
+        string identifier = tokens[tokenIndex].Value;
+        if (TryParseMethod(tokens, out IExpression[]? parameters))
+        {
+            expre = new Function(identifier, parameters!);
+            return true;
+        }
+        return ResetTokenIndex(tokenIndex, out expre);
     }
 
     private bool TryGetParams(Token[] tokens, out IExpression[]? parameters)
@@ -288,7 +309,7 @@ public class Parser
             && tryGetFunc is not null && tryGetFunc(tokens, out result)
             && TryMatchToken(tokens, TokenType.RightCurly))
             return GetDefaultExpre(result!, out expre);
-        else if (TryParseFunction(tokens, out result, tokens[startIndex].Value))
+        else if (GetNewFunction(tokens, out result))
             return GetDefaultExpre(result!, out expre);
         else if (TryMatchToken(tokens, TokenType.Identifier))
             return GetDefaultExpre(new VariableExpre(tokens[startIndex].Value), out expre);

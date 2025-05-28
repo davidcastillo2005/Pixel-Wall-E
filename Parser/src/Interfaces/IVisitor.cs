@@ -8,7 +8,7 @@ public interface IVisitor
     void AssignVisit(string identifier, Result value);
     void LabelVisit(string identifier, int line);
     void GotoVisit(string targetLabel, Result? condition);
-    void ActionVisit(string targetLabel, Result[] arguments);
+    void ActionVisit(string identifier, Result[] arguments);
     void CodeBlockVisit(IStatement[] lines);
     Result FuncVisit(string identifier, Result[] arguments);
     Result VariableVisit(string identifier);

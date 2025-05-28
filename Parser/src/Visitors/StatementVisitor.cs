@@ -2,16 +2,17 @@
 using PixelWallE.Parser.src.Enums;
 using PixelWallE.Parser.src.Interfaces;
 
-namespace PixelWallE.Parser.src;
+namespace PixelWallE.Parser.src.Visitors;
 
 public abstract class StatementVisitor(Context context) : IVisitor
 {
     private readonly Context context = context;
 
     public Context Context { get; set; } = context;
-    public void ActionVisit(string targetLabel, Result[] arguments)
+    public void ActionVisit(string identifier, Result[] arguments)
     {
-        throw new NotImplementedException();
+        object[] objects = [.. arguments.Select(x => x.Value!)];
+        context.Actions[identifier](objects);
     }
 
     public void GotoVisit(string targetLabel, Result? condition)
@@ -69,12 +70,7 @@ public abstract class StatementVisitor(Context context) : IVisitor
 
     public Result FuncVisit(string identifier, Result[] arguments)
     {
-        var objects = new dynamic[arguments.Length];
-        for (int i = 0; i < arguments.Length; i++)
-        {
-            objects[i] = arguments[i].Value!;
-        }
-
+        object[] objects = [.. arguments.Select(x => x.Value!)];
         var result = context.Functions[identifier](objects);
         return new Result(result);
     }
