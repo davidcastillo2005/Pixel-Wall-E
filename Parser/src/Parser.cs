@@ -3,8 +3,10 @@ using PixelWallE.Lexer.src;
 using PixelWallE.Parser.src.Enums;
 using PixelWallE.Parser.src.Extensions;
 using PixelWallE.Parser.src.AST;
+using TokenType = PixelWallE.Lexer.src.Type;
+using PixelWallE.Parser.src.Interfaces;
 
-namespace PixelWallE.Parser.src.Parser;
+namespace PixelWallE.Parser.src;
 
 public enum OperatorState { Shift, Reduce }
 
@@ -23,33 +25,30 @@ public class Parser
 
     delegate bool TryGetFunc(Token[] tokens, out IExpression? expre);
 
-    public IStatement Parse(Token[] tokens) => TryGetBlockExpre(tokens, out IStatement? expre) ? expre! : throw new InvalidExpressionException();
+    public IStatement Parse(Token[] tokens) => TryGetCodeBlock(tokens, out IStatement? expre) ? expre! : throw new InvalidExpressionException();
 
-    private bool TryGetBlockExpre(Token[] tokens, out IStatement? expre)
+    private bool TryGetCodeBlock(Token[] tokens, out IStatement? expre)
     {
-        List<IStatement> expressions = [];
+        List<IStatement> statements = [];
         bool ReadLine;
         do
         {
-            //TODO Cambiar el nombre a todos loa AssignExpre a AssignInst.
-            //TODO Cambiar todas los nombres expression a instruction.
-
-            if (ReadLine = TryGetAssignExpre(tokens, out IStatement? lineExpre)
-                || TryGetGoToInstr(tokens, out lineExpre)
-                || TryGetFunctionExpre(tokens, out lineExpre)
-                || TryGetLabelInst(expressions.Count, tokens, out lineExpre))
+            if (ReadLine = TryGetAssignExpre(tokens, out IStatement? line)
+                || TryGetGoToStmnt(tokens, out line)
+                || TryGetFunctionExpre(tokens, out line)
+                || TryGetLabelInst(statements.Count, tokens, out line))
             {
-                expressions.Add(lineExpre!);
+                statements.Add(line!);
                 continue;
             }
             ReadLine = TryMatchToken(tokens, TokenType.NewLine);
         } while (ReadLine);
 
-        Block node = new([.. expressions]);
+        CodeBlock node = new([.. statements]);
         return GetDefaultExpre(node, out expre);
     }
 
-    private bool TryGetGoToInstr(Token[] tokens, out IStatement? lineExpre)
+    private bool TryGetGoToStmnt(Token[] tokens, out IStatement? lineExpre)
     {
         int startIndex = tokenIndex;
         if (TryMatchAllTokens(tokens,
@@ -62,16 +61,16 @@ public class Parser
         {
             var valueIndex = tokenIndex - 2;
             string targetLabel = tokens[valueIndex].Value;
-            StatementNode instr;
+            Statement instr;
             if (TryMatchToken(tokens, TokenType.LeftCurly)
                 && TryParseBooleanExpre(tokens, out IExpression cond)
                 && TryMatchToken(tokens, TokenType.RightCurly))
             {
-                instr = new GoToStmntNode(targetLabel, cond);
+                instr = new GoToStmnt(targetLabel, cond);
             }
             else
             {
-                instr = new GoToStmntNode(targetLabel, null);
+                instr = new GoToStmnt(targetLabel, null);
             }
             return GetDefaultExpre(instr, out lineExpre);
         }
@@ -84,7 +83,7 @@ public class Parser
         string value = tokens[tokenIndex].Value;
         if (!TryMatchAllTokens(tokens, [TokenType.Identifier, TokenType.NewLine]))
             return ResetTokenIndex(startIndex, out lineExpre);
-        StatementNode instr = new LabelStmntNode(value, lineIndex);
+        Statement instr = new LabelStmnt(value, lineIndex);
         return GetDefaultExpre(instr, out lineExpre);
     }
 
@@ -121,7 +120,7 @@ public class Parser
         if (TryMatchAllTokens(tokens, [TokenType.Identifier, TokenType.LeftCurly])
             && TryGetParams(tokens, out IExpression[]? parameters))
         {
-            expre = new CallableExpreNode(name, parameters!);
+            expre = new Function(name, parameters!);
             return true;
         }
         return ResetTokenIndex(startIndex, out expre);
@@ -168,11 +167,11 @@ public class Parser
     private bool TryParseArithExpre(Token[] tokens, out IExpression? expression)
         => TryGetAddExpre(tokens, out expression);
     private bool TryGetAddExpre(Token[] tokens, out IExpression? expre)
-        => TryShiftBinaryExpre(tokens, TryGetProduct, out expre, [BinaryOps.Add, BinaryOps.Subtract]);
+        => TryShiftBinaryExpre(tokens, TryGetProduct, out expre, [TokenType.Plus, TokenType.Minus]);
     private bool TryGetProduct(Token[] tokens, out IExpression? expre)
-        => TryShiftBinaryExpre(tokens, TryGetPow, out expre, [BinaryOps.Multiply, BinaryOps.Divide, BinaryOps.Modulus]);
+        => TryShiftBinaryExpre(tokens, TryGetPow, out expre, [TokenType.Multiplication, TokenType.Division, TokenType.Modulus]);
     private bool TryGetPow(Token[] tokens, out IExpression? expre)
-        => TryShiftBinaryExpre(tokens, TryGetNum, out expre, [BinaryOps.Power]);
+        => TryShiftBinaryExpre(tokens, TryGetNum, out expre, [TokenType.Exponentiation]);
     private bool TryGetNum(Token[] tokens, out IExpression? expre)
         => TryGetLiteral(tokens, Literals.Integer, TryParseArithExpre, out expre);
 
@@ -183,19 +182,19 @@ public class Parser
     private bool TryParseBooleanExpre(Token[] tokens, out IExpression b) => TryGetOrExpre(tokens, out b!);
 
     private bool TryGetOrExpre(Token[] tokens, out IExpression? expre)
-        => TryShiftBinaryExpre(tokens, TryGetAndExpre, out expre, [BinaryOps.Or]);
+        => TryShiftBinaryExpre(tokens, TryGetAndExpre, out expre, [TokenType.Or]);
 
     private bool TryGetAndExpre(Token[] tokens, out IExpression? expre)
-        => TryShiftBinaryExpre(tokens, TryGetComparator, out expre, [BinaryOps.And]);
+        => TryShiftBinaryExpre(tokens, TryGetComparator, out expre, [TokenType.And]);
 
     private bool TryGetComparator(Token[] tokens, out IExpression? expre) => TryShiftBinaryExpre(tokens, TryMatchComp, out expre,
     [
-        BinaryOps.Equal,
-        BinaryOps.NotEqual,
-        BinaryOps.GreaterThan,
-        BinaryOps.GreaterOrEqualThan,
-        BinaryOps.LessThan,
-        BinaryOps.LessOrEqualThan
+        TokenType.Equal,
+        TokenType.NotEqual,
+        TokenType.GreaterOrEqual,
+        TokenType.Greater,
+        TokenType.Less,
+        TokenType.LessOrEqual
     ]);
 
     private bool TryMatchComp(Token[] tokens, out IExpression? expre) =>
@@ -219,59 +218,59 @@ public class Parser
 
     #region Tools
 
-    private bool TryShiftBinaryExpre(Token[] tokens, TryGetFunc tryGetFunc, out IExpression? expre, BinaryOps[] op)
+    private bool TryShiftBinaryExpre(Token[] tokens, TryGetFunc tryGetFunc, out IExpression? expre, TokenType[] tokenTypes)
     {
         int startIndex = tokenIndex;
         if (!tryGetFunc(tokens, out IExpression? left))
             return ResetTokenIndex(startIndex, out expre);
-        if (!TryReduceBinaryExpre(tokens, tryGetFunc, left, out expre, op))
+        if (!TryReduceBinaryExpre(tokens, tryGetFunc, left, out expre, tokenTypes))
             return GetDefaultExpre(left!, out expre);
         return true;
     }
 
-    private bool TryShifttUnaryExpre(Token[] tokens, TryGetFunc tryGetFunc, out IExpression? expre, TokenType[] types)
+    private bool TryShifttUnaryExpre(Token[] tokens, TryGetFunc tryGetFunc, out IExpression? expre, TokenType[] tokenTypes)
     {
         int startIndex = tokenIndex;
         if (!tryGetFunc(tokens, out IExpression? argument))
             return ResetTokenIndex(startIndex, out expre);
-        if (!TryReduceUnaryExpre(tokens, tryGetFunc, argument, out expre, types))
+        if (!TryReduceUnaryExpre(tokens, tryGetFunc, argument, out expre, tokenTypes))
             return GetDefaultExpre(argument!, out expre);
         return true;
     }
 
-    private bool TryReduceBinaryExpre(Token[] tokens, TryGetFunc tryGetFunc, IExpression? left, out IExpression? expre, BinaryOps[] op)
+    private bool TryReduceBinaryExpre(Token[] tokens, TryGetFunc tryGetFunc, IExpression? left, out IExpression? expre, TokenType[] tokenTypes)
     {
         int startIndex = tokenIndex;
-        if (!TryGetMatchToken(tokens, op, out TokenType type))
+        if (!TryGetMatchToken(tokens, tokenTypes, out TokenType type))
             return ResetTokenIndex(startIndex, out expre);
         OperatorState operatorState = ShiftOrReduceOperators[type];
-        if (operatorState == OperatorState.Shift && TryShiftBinaryExpre(tokens, tryGetFunc, out IExpression? right, op))
+        if (operatorState == OperatorState.Shift && TryShiftBinaryExpre(tokens, tryGetFunc, out IExpression? right, tokenTypes))
             return GetDefaultExpre(new BinaryExpreNode(left!, right!, type.ToBinaryType()), out expre);
         if (operatorState == OperatorState.Reduce && tryGetFunc(tokens, out right))
         {
             IExpression node = new BinaryExpreNode(left!, right!, type.ToBinaryType());
-            if (TryReduceBinaryExpre(tokens, tryGetFunc, node, out IExpression? result, op))
-                return GetDefaultExpre(result!, out expre);
+            if (TryReduceBinaryExpre(tokens, tryGetFunc, node, out IExpression? result, tokenTypes))
+                return GetDefaultExpre(result, out expre);
             return GetDefaultExpre(node, out expre);
         }
         return ResetTokenIndex(startIndex, out expre);
     }
 
-    private bool TryReduceUnaryExpre(Token[] tokens, TryGetFunc tryGetFunc, IExpression? argument, out IExpression? expre, TokenType[] types)
+    private bool TryReduceUnaryExpre(Token[] tokens, TryGetFunc tryGetFunc, IExpression? argument, out IExpression? expre, TokenType[] tokenTypes)
     {
         int startIndex = tokenIndex;
 
-        if (!TryGetMatchToken(tokens, types, out TokenType type))
+        if (!TryGetMatchToken(tokens, tokenTypes, out TokenType type))
             return ResetTokenIndex(startIndex, out expre);
 
         OperatorState operatorState = ShiftOrReduceOperators[type];
-        if (operatorState == OperatorState.Shift && TryShifttUnaryExpre(tokens, tryGetFunc, out argument, types))
+        if (operatorState == OperatorState.Shift && TryShifttUnaryExpre(tokens, tryGetFunc, out argument, tokenTypes))
             return GetDefaultExpre(new UnaryExpreNode(argument!, type.ToUnaryType()), out expre);
         if (operatorState == OperatorState.Reduce && tryGetFunc(tokens, out argument))
         {
             IExpression node = new UnaryExpreNode(argument!, type.ToUnaryType());
-            if (TryReduceUnaryExpre(tokens, tryGetFunc, node, out IExpression? result, types))
-                return GetDefaultExpre(node, out expre);
+            if (TryReduceUnaryExpre(tokens, tryGetFunc, node, out IExpression? result, tokenTypes))
+                return GetDefaultExpre(result, out expre);
             return GetDefaultExpre(node, out expre);
         }
 
@@ -292,11 +291,10 @@ public class Parser
         else if (TryParseFunction(tokens, out result, tokens[startIndex].Value))
             return GetDefaultExpre(result!, out expre);
         else if (TryMatchToken(tokens, TokenType.Identifier))
-            return GetDefaultExpre(new VariableExpreNode(tokens[startIndex].Value), out expre);
+            return GetDefaultExpre(new VariableExpre(tokens[startIndex].Value), out expre);
         return ResetTokenIndex(startIndex, out expre);
     }
 
-    //TODO Buscar la manera de unir los dos metodos TryGetMatchToken ya que son muy parecidos.
     private bool TryGetMatchToken(Token[] tokens, TokenType[] types, out TokenType type)
     {
         foreach (TokenType item in types)
@@ -310,42 +308,8 @@ public class Parser
         return false;
     }
 
-    private bool TryGetMatchToken(Token[] tokens, BinaryOps[] op, out TokenType type)
-    {
-        foreach (BinaryOps item in op)
-        {
-            if (!TryMatchToken(tokens, item))
-                continue;
-            type = item.ToTokenType();
-            return true;
-        }
-        type = TokenType.Unknown;
-        return false;
-    }
-    // private bool TryGetMatchToken<T>(Token[] tokens, T[] types, out TokenType matchedType) where T : IConvertibleTokenType
-    // {
-    //     if (typeof(T) == typeof(BinaryOps))
-    //     {
-    //         var binOpsArr = types as BinaryOps[];
-    //         if (binOpsArr is not null)
-    //         {
-    //             foreach (var item in binOpsArr)
-    //             {
-    //                 var typeToCompare = item.ToTokenType();
-    //                 if (tokens[tokenIndex].Type == typeToCompare)
-    //                 {
-    //                     matchedType = typeToCompare;
-    //                     return true;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     matchedType = TokenType.Unknown;
-    //     return false;
-    // }
-
     private static bool TryAssignExpre(string name, IExpression value, out IStatement expre)
-        => GetDefaultExpre(new AssignExpre(name, value), out expre);
+        => GetDefaultExpre(new AssignStmnt(name, value), out expre);
 
     private bool TryMatchAllTokens(Token[] tokens, TokenType[] types)
     {

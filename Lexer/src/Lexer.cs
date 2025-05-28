@@ -2,7 +2,7 @@ namespace PixelWallE.Lexer.src;
 
 public class Lexer
 {
-    private int InputIndex = 0;
+    private int SourceIndex = 0;
 
     private List<Token> tokens = [];
 
@@ -48,7 +48,7 @@ public class Lexer
 
     private bool TryGetNewLineToken(string input, out Token? token)
     {
-        int startIndex = InputIndex;
+        int startIndex = SourceIndex;
         if (MatchPattern(input, "\n") || MatchPattern(input, "\r\n"))
         {
             token = new Token(Type.NewLine, "\n");
@@ -69,15 +69,8 @@ public class Lexer
 
     private bool TryGetSymToken(string input, out Token? token)
     {
-        int startIndex = InputIndex;
-        foreach (var item in symbols)
-        {
-            if (MatchPattern(input, item.symbol))
-            {
-                token = new Token(item.token, item.symbol);
-                return true;
-            }
-        }
+        int startIndex = SourceIndex;
+        if (input)
         return ResetToken(startIndex, out token);
     }
 
@@ -92,11 +85,11 @@ public class Lexer
             token = new Token(Type.Interger, i!);
             return true;
         }
-        return ResetToken(InputIndex, out token);
+        return ResetToken(SourceIndex, out token);
     }
 
     private bool IsInterger(string input, int startIndex)
-        => InputIndex < input.Length && char.IsDigit(input[InputIndex]);
+        => SourceIndex < input.Length && char.IsDigit(input[SourceIndex]);
 
     #endregion
 
@@ -111,12 +104,12 @@ public class Lexer
             token = new Token(type, value!);
             return true;
         }
-        return ResetToken(InputIndex, out token);
+        return ResetToken(SourceIndex, out token);
     }
 
     private bool IsIdentifier(string input, int startIndex)
-        => InputIndex < input.Length && !(char.IsDigit(input[InputIndex]) && startIndex == InputIndex)
-        && char.IsLetterOrDigit(input[InputIndex]);
+        => SourceIndex < input.Length && !(char.IsDigit(input[SourceIndex]) && startIndex == SourceIndex)
+        && char.IsLetterOrDigit(input[SourceIndex]);
 
     #endregion
 
@@ -135,11 +128,11 @@ public class Lexer
 
     private bool TryGetStrValue(string input, out string? tokenValue)
     {
-        int startIndex = InputIndex;
+        int startIndex = SourceIndex;
         string temp = "";
-        while (input[InputIndex] != '\"')
+        while (input[SourceIndex] != '\"')
         {
-            temp += input[InputIndex++];
+            temp += input[SourceIndex++];
         }
 
         if (temp != "")
@@ -156,12 +149,12 @@ public class Lexer
 
     private bool TryGetIntOrIdOrKey(string input, IsIntOrId isIntOrId, out string? tokenValue)
     {
-        int startIndex = InputIndex;
+        int startIndex = SourceIndex;
         string temp = "";
 
         while (isIntOrId(input, startIndex))
         {
-            temp += input[InputIndex++];
+            temp += input[SourceIndex++];
         }
 
         if (temp != "")
@@ -174,23 +167,23 @@ public class Lexer
 
     private bool MatchPattern(string input, string pattern)
     {
-        int startIndex = InputIndex;
+        int startIndex = SourceIndex;
 
         for (int i = 0; i < pattern.Length; i++)
         {
             if (i + startIndex > input.Length - 1 || pattern[i] != input[i + startIndex])
             {
-                InputIndex = startIndex;
+                SourceIndex = startIndex;
                 return false;
             }
-            InputIndex++;
+            SourceIndex++;
         }
         return true;
     }
 
     private bool ResetToken<T>(int startIndex, out T? token)
     {
-        InputIndex = startIndex;
+        SourceIndex = startIndex;
         token = default;
         return false;
     }

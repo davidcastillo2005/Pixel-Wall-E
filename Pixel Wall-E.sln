@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reader", "Reader\Reader.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI", "CLI\CLI.csproj", "{F298A436-08C5-425A-B89B-B0E29242136E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor", "Visitor\Visitor.csproj", "{59AB6B0A-9B81-4088-AD5E-731A1D31E724}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,18 +69,6 @@ Global
 		{F298A436-08C5-425A-B89B-B0E29242136E}.Release|x64.Build.0 = Release|Any CPU
 		{F298A436-08C5-425A-B89B-B0E29242136E}.Release|x86.ActiveCfg = Release|Any CPU
 		{F298A436-08C5-425A-B89B-B0E29242136E}.Release|x86.Build.0 = Release|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Debug|x64.Build.0 = Debug|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Debug|x86.Build.0 = Debug|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Release|Any CPU.Build.0 = Release|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Release|x64.ActiveCfg = Release|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Release|x64.Build.0 = Release|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Release|x86.ActiveCfg = Release|Any CPU
-		{59AB6B0A-9B81-4088-AD5E-731A1D31E724}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

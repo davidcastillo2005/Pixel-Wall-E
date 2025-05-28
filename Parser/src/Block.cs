@@ -1,40 +1,23 @@
+using System.Reflection;
 using PixelWallE.Parser.src.AST;
+using PixelWallE.Parser.src.Interfaces;
 
 namespace PixelWallE.Parser.src;
 
-public class Block(AstNode[] lines) : StatementNode
+public class CodeBlock(IStatement[] lines) : Statement, IStatement
 {
-    public AstNode[] Lines { get; protected set; } = lines;
+    public IStatement[] Lines { get; protected set; } = lines;
 
-    public override void Accept(Context context)
+    public override void Accept(IVisitor visitor)
     {
-        for (int i = 0; i < Lines.Length; i++)
-        {
-            Lines[i].Accept(context);
-            if (context.IsJumping)
-            {
-                i = context.Labels[context.TargetLabel!];
-                context.EndJump();
-            }
-        }
+        visitor.CodeBlockVisit(Lines);
     }
 
-    public override void SearchLabel(Context context)
-    {
-        for (int i = 0; i < Lines.Length; i++)
-        {
-            Lines[i].SearchLabel(context);
-        }
-    }
-}
-
-public class AssignExpre(string name, IExpression value) : StatementNode
-{
-    public string Name { get; } = name;
-    public IExpression Value { get; } = value;
-
-    public override void Accept(Context context)
-    {
-        context.Variables[Name] = Value.Accept(context);
-    }
+    // public override void SearchLabel(Context context)
+    // {
+    //     for (int i = 0; i < Lines.Length; i++)
+    //     {
+    //         Lines[i].SearchLabel(context);
+    //     }
+    // }
 }

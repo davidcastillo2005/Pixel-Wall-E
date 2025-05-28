@@ -1,4 +1,5 @@
 using PixelWallE.Parser.src.Enums;
+using TokenType = PixelWallE.Lexer.src.Type;
 
 namespace PixelWallE.Parser.src.Extensions;
 
