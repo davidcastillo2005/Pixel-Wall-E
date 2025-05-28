@@ -20,10 +20,24 @@ public class Result : IParsable<Result>
         Type = type;
     }
 
-    public bool ToBool()
+    public bool ToBoolean()
     {
-        if (Value is not null && Value is bool b)
-            return b;
+        if (Value is not null && Value is bool bValue)
+            return bValue;
+        throw new Exception();
+    }
+
+    public int ToInterger()
+    {
+        if (Value is not null && Value is int iValue)
+            return iValue;
+        throw new Exception();
+    }
+
+    public override string ToString()
+    {
+        if (Value is not null && Value is string sValue)
+            return sValue;
         throw new Exception();
     }
 

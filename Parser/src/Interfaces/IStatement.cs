@@ -1,6 +1,4 @@
-using PixelWallE.Parser.src.Interfaces;
-
-namespace PixelWallE.Parser.src.AST;
+namespace PixelWallE.Parser.src.Interfaces;
 
 public interface IStatement
 {

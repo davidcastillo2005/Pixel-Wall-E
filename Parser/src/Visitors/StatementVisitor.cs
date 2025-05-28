@@ -1,5 +1,4 @@
-﻿using PixelWallE.Parser.src.AST;
-using PixelWallE.Parser.src.Enums;
+﻿using PixelWallE.Parser.src.Enums;
 using PixelWallE.Parser.src.Interfaces;
 
 namespace PixelWallE.Parser.src.Visitors;
@@ -19,7 +18,7 @@ public abstract class StatementVisitor(Context context) : IVisitor
     {
         if (condition is not null)
         {
-            bool cond = condition.ToBool();
+            bool cond = condition.ToBoolean();
             if (!cond)
                 return;
         }
@@ -36,24 +35,24 @@ public abstract class StatementVisitor(Context context) : IVisitor
         throw new NotImplementedException();
     }
 
-    public Result BinaryVisit(Result left, BinaryOps op, Result right)
+    public Result BinaryVisit(Result left, BinaryOperation op, Result right)
     {
         return op switch
         {
-            BinaryOps.Add => left! + right!,
-            BinaryOps.Subtract => left! - right!,
-            BinaryOps.Multiply => left! * right!,
-            BinaryOps.Divide => left! / right!,
-            BinaryOps.Power => left! ^ right!,
-            BinaryOps.Modulus => left! % right!,
-            BinaryOps.LessOrEqualThan => left! <= right!,
-            BinaryOps.GreaterOrEqualThan => left! >= right!,
-            BinaryOps.LessThan => left! < right!,
-            BinaryOps.GreaterThan => left! > right!,
-            BinaryOps.Equal => left! == right!,
-            BinaryOps.NotEqual => left! != right!,
-            BinaryOps.And => left! & right!,
-            BinaryOps.Or => left! | right!,
+            BinaryOperation.Add => left! + right!,
+            BinaryOperation.Subtract => left! - right!,
+            BinaryOperation.Multiply => left! * right!,
+            BinaryOperation.Divide => left! / right!,
+            BinaryOperation.Power => left! ^ right!,
+            BinaryOperation.Modulus => left! % right!,
+            BinaryOperation.LessOrEqualThan => left! <= right!,
+            BinaryOperation.GreaterOrEqualThan => left! >= right!,
+            BinaryOperation.LessThan => left! < right!,
+            BinaryOperation.GreaterThan => left! > right!,
+            BinaryOperation.Equal => left! == right!,
+            BinaryOperation.NotEqual => left! != right!,
+            BinaryOperation.And => left! & right!,
+            BinaryOperation.Or => left! | right!,
             _ => throw new NotImplementedException(),
         };
     }
@@ -91,7 +90,7 @@ public abstract class StatementVisitor(Context context) : IVisitor
         if (result is not null)
             return result;
         else
-            throw new Exception();
+            throw new NotImplementedException();
     }
 
     public void Visit(IStatement statement)

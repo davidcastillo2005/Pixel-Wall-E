@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using PixelWallE.Parser.src.AST;
 using PixelWallE.Parser.src.Enums;
 using PixelWallE.Parser.src.Interfaces;
@@ -6,99 +7,153 @@ namespace PixelWallE.Parser.src.Visitors;
 
 public class SemanticVisitor(Context context) : IVisitor
 {
-    private readonly Context context = context;
+    private readonly Context Context = context;
     public List<Exception> Exceptions { get; set; } = [];
 
-    public void ActionVisit(string targetLabel, Result[] arguments)
+    public void ActionVisit(string identifier, Result[] arguments)
     {
-        throw new NotImplementedException();
+        if (!Context.Actions.ContainsKey(identifier))
+        {
+            AddException($"Method '{identifier}' not defined.");
+        }
     }
 
     public void AssignVisit(string identifier, Result value)
     {
-        if (!context.Variables.ContainsKey(identifier))
+        if (!Context.Variables.ContainsKey(identifier))
         {
-            //TODO Poner mensaje al error: Cuando tratas de asignar un valor a una variable no declarada.
-            Exceptions.Add(new Exception($"Variable '{identifier}' not declared."));
+            AddException($"Variable '{identifier}' not declared.");
         }
         else
         {
-            context.Variables[identifier] = new Result(null, value.Type);
+            Context.Variables[identifier] = NullResult();
         }
     }
 
-    public Result BinaryVisit(Result left, BinaryOps op, Result right)
+    public Result BinaryVisit(Result left, BinaryOperation op, Result right)
     {
-        if (left.Type != right.Type)
+        if (HasNullResult(left, right))
         {
-            //TODO Poner mensaje al error: Cuando tratas de hacer una operacion con tipos diferentes.
+            AddException("Cannot perform operation with null values.");
+            return NullResult();
+        }
+        else if (left.Type != right.Type)
+        {
             Exceptions.Add(new Exception($"Type mismatch: {left.Type} and {right.Type} cannot be used with operator {op}."));
-            return new Result(null, value.Type);
+            return NullResult();
         }
-        else if (op == BinaryOps.Divide && right.Value == 0)
+        else if (right.Value is int rInt)
         {
-            //TODO Poner mensaje al error: Cuando tratas de dividir por cero.
-            Exceptions.Add(new Exception("Division by zero is not allowed."));
-            return new Result(null, ResultType.Error);
+            if ((op == BinaryOperation.Divide || op == BinaryOperation.Modulus) && rInt == 0)
+            {
+                Exceptions.Add(new Exception("Division by zero is not allowed."));
+                return NullResult();
+            }
         }
-        else if (op == BinaryOps.Modulus && right.Value == 0)
+        else if (right.Value is bool rBool)
         {
-            //TODO Poner mensaje al error: Cuando tratas de hacer modulo por cero.
-            Exceptions.Add(new Exception("Modulo by zero is not allowed."));
-            return new Result(null, ResultType.Error);
+            //TODO Poner mensaje al error: Cuando tratas de hacer una operacion binaria con un booleano.
+        }
+        else if (right.Value is string rString)
+        {
+            //TODO Poner mensaje al error: Cuando tratas de hacer una operacion binaria con un string.
         }
         else
         {
-            // Assuming the operation is valid, return a new Result.
-            return new Result(null, left.Type); // Placeholder for actual operation result.
+            AddException($"Unsupported operation: {op} for types {right.Type}");
+            return NullResult();
         }
+        return NullResult();
     }
 
     public void CodeBlockVisit(IStatement[] lines)
     {
-        throw new NotImplementedException();
+        foreach (var item in lines)
+        {
+            item.Accept(this);
+        }
     }
 
     public Result FuncVisit(string identifier, Result[] arguments)
     {
-        throw new NotImplementedException();
+        if (!Context.Functions.ContainsKey(identifier))
+        {
+            AddException("Method '" + identifier + "' not defined.");
+        }
+        return NullResult();
     }
 
     public void GotoVisit(string targetLabel, Result? condition)
     {
-        throw new NotImplementedException();
+        if (Context.Labels.ContainsKey(targetLabel))
+        {
+            AddException("Label '" + targetLabel + "' not found.");
+        }
     }
 
-    //TODO Poner mensaje al error: Cuando tratas hacer un Visit a un label ya existente.
     public void LabelVisit(string identifier, int line)
     {
-        if (context.Labels.ContainsKey(identifier))
-            Exceptions.Add(new Exception(""));
+        if (Context.Labels.ContainsKey(identifier))
+            AddException("Label '" + identifier + "' already exists.");
     }
 
     public Result LiteralVisit(Result value)
     {
-        return value;
+        return NullResult();
     }
 
     public Result[] ParamsVisit(IExpression[] expressions)
     {
-        throw new NotImplementedException();
+        List<Result> results = [];
+        foreach (var item in expressions)
+        {
+            results.Add(item.Accept(this));
+        }
+        return [.. results];
     }
 
     public Result UnaryVisit(Result argument, UnaryOps op)
     {
-        throw new NotImplementedException();
+        if (HasNullResult(argument))
+        {
+            AddException("Cannot perform unary operation with null value.");
+            return NullResult();
+        }
+        else if (argument.Value is int argInt)
+        {
+            if (op == UnaryOps.Not)
+            {
+                AddException($"Cannot perform {op} operation on an integer.");
+                return NullResult();
+            }
+        }
+        else if (argument.Value is bool argBool)
+        {
+            //TODO Buscar casos de error semántico en que la variable es booleana y la operación es unaria.
+        }
+        else if (argument.Value is string argString)
+        {
+            //TODO Buscar casos de error semántico en que la variable es booleana y la operación es unaria.
+        }
+        return NullResult();
     }
 
     public Result VariableVisit(string identifier)
     {
-        throw new NotImplementedException();
+        if (!Context.Variables.TryGetValue(identifier, out Result? value))
+        {
+            AddException("Variable '" + identifier + "' not declared.");
+        }
+        else if (HasNullResult(value))
+        {
+            AddException($"Variable '{identifier}' is null.");
+        }
+        return NullResult();
     }
 
     public void Visit(IStatement statement)
     {
-        throw new NotImplementedException();
+        statement.Accept(this);
     }
 
     public void SearchLabel(IStatement[] lines)
@@ -111,4 +166,27 @@ public class SemanticVisitor(Context context) : IVisitor
             }
         }
     }
+
+    #region Tools
+    private bool HasNullResult(params Result[] results)
+    {
+        foreach (var result in results)
+        {
+            if (result is null || result.Value is null)
+                return true;
+        }
+        return false;
+    }
+
+    private void AddException(string message)
+    {
+        Exceptions.Add(new Exception(message));
+    }
+
+    private Result NullResult()
+    {
+        return NullResult();
+    }
+
+    #endregion
 }

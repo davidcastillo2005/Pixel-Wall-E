@@ -47,7 +47,6 @@ public class Parser
         CodeBlock node = new([.. statements]);
         return GetDefaultExpre(node, out expre);
     }
-
     private bool TryGetGoToStmnt(Token[] tokens, out IStatement? lineExpre)
     {
         int startIndex = tokenIndex;
@@ -100,7 +99,7 @@ public class Parser
     {
         int startIndex = tokenIndex;
         string name = tokens[tokenIndex].Value;
-        List<TryGetFunc> list = [TryParseBooleanExpre, TryParseArithExpre, TryParseStringExpre];
+        TryGetFunc[] list = [TryParseBooleanExpre, TryParseArithExpre, TryParseStringExpre];
 
         foreach (var func in list)
         {
@@ -125,7 +124,7 @@ public class Parser
         return true;
     }
 
-    private bool GetNewAction(Token[] tokens, out IStatement? statement)
+    private bool TryGetAction(Token[] tokens, out IStatement? statement)
     {
         string identifier = tokens[tokenIndex].Value;
         if (TryParseMethod(tokens, out IExpression[]? parameters))
@@ -136,7 +135,7 @@ public class Parser
         return ResetTokenIndex(tokenIndex, out statement);
     }
 
-    private bool GetNewFunction(Token[] tokens, out IExpression? expre)
+    private bool TryGetFunction(Token[] tokens, out IExpression? expre)
     {
         string identifier = tokens[tokenIndex].Value;
         if (TryParseMethod(tokens, out IExpression[]? parameters))
@@ -309,7 +308,7 @@ public class Parser
             && tryGetFunc is not null && tryGetFunc(tokens, out result)
             && TryMatchToken(tokens, TokenType.RightCurly))
             return GetDefaultExpre(result!, out expre);
-        else if (GetNewFunction(tokens, out result))
+        else if (TryGetFunction(tokens, out result))
             return GetDefaultExpre(result!, out expre);
         else if (TryMatchToken(tokens, TokenType.Identifier))
             return GetDefaultExpre(new VariableExpre(tokens[startIndex].Value), out expre);
@@ -355,7 +354,7 @@ public class Parser
                 if (tokens[tokenIndex].Type != token)
                     return false;
                 break;
-            case BinaryOps binOp:
+            case BinaryOperation binOp:
                 if (tokens[tokenIndex].Type != binOp.ToTokenType())
                     return false;
                 break;

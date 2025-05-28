@@ -1,4 +1,3 @@
-using PixelWallE.Parser.src.AST;
 using PixelWallE.Parser.src.Enums;
 namespace PixelWallE.Parser.src.Interfaces;
 
@@ -12,7 +11,7 @@ public interface IVisitor
     void CodeBlockVisit(IStatement[] lines);
     Result FuncVisit(string identifier, Result[] arguments);
     Result VariableVisit(string identifier);
-    Result BinaryVisit(Result left, BinaryOps op, Result right);
+    Result BinaryVisit(Result left, BinaryOperation op, Result right);
     Result UnaryVisit(Result argument, UnaryOps op);
     Result LiteralVisit(Result value);
     Result[] ParamsVisit(IExpression[] expressions);

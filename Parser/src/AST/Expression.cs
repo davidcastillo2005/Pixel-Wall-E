@@ -2,11 +2,11 @@ using PixelWallE.Parser.src.Enums;
 using PixelWallE.Parser.src.Interfaces;
 namespace PixelWallE.Parser.src.AST;
 
-public class BinaryExpreNode(IExpression left, IExpression right, BinaryOps opType) : IExpression
+public class BinaryExpreNode(IExpression left, IExpression right, BinaryOperation opType) : IExpression
 {
     public IExpression LeftArg { get; set; } = left;
     public IExpression RightArg { get; set; } = right;
-    public BinaryOps OperatorType { get; set; } = opType;
+    public BinaryOperation OperatorType { get; set; } = opType;
 
     public Result Accept(IVisitor visitor)
     {

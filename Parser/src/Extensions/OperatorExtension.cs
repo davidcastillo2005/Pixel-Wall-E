@@ -5,41 +5,41 @@ namespace PixelWallE.Parser.src.Extensions;
 
 public static class OperatorExtension
 {
-    public static BinaryOps ToBinaryType(this TokenType type) => type switch
+    public static BinaryOperation ToBinaryType(this TokenType type) => type switch
     {
-        TokenType.Plus => BinaryOps.Add,
-        TokenType.Minus => BinaryOps.Subtract,
-        TokenType.Multiplication => BinaryOps.Multiply,
-        TokenType.Division => BinaryOps.Divide,
-        TokenType.Exponentiation => BinaryOps.Power,
-        TokenType.Modulus => BinaryOps.Modulus,
-        TokenType.LessOrEqual => BinaryOps.LessOrEqualThan,
-        TokenType.GreaterOrEqual => BinaryOps.GreaterOrEqualThan,
-        TokenType.Less => BinaryOps.LessThan,
-        TokenType.Greater => BinaryOps.GreaterThan,
-        TokenType.Equal => BinaryOps.Equal,
-        TokenType.NotEqual => BinaryOps.NotEqual,
-        TokenType.And => BinaryOps.And,
-        TokenType.Or => BinaryOps.Or,
+        TokenType.Plus => BinaryOperation.Add,
+        TokenType.Minus => BinaryOperation.Subtract,
+        TokenType.Multiplication => BinaryOperation.Multiply,
+        TokenType.Division => BinaryOperation.Divide,
+        TokenType.Exponentiation => BinaryOperation.Power,
+        TokenType.Modulus => BinaryOperation.Modulus,
+        TokenType.LessOrEqual => BinaryOperation.LessOrEqualThan,
+        TokenType.GreaterOrEqual => BinaryOperation.GreaterOrEqualThan,
+        TokenType.Less => BinaryOperation.LessThan,
+        TokenType.Greater => BinaryOperation.GreaterThan,
+        TokenType.Equal => BinaryOperation.Equal,
+        TokenType.NotEqual => BinaryOperation.NotEqual,
+        TokenType.And => BinaryOperation.And,
+        TokenType.Or => BinaryOperation.Or,
         _ => throw new Exception(),
     };
 
-    public static TokenType ToTokenType(this BinaryOps op) => op switch
+    public static TokenType ToTokenType(this BinaryOperation op) => op switch
     {
-        BinaryOps.Add => TokenType.Plus,
-        BinaryOps.Subtract => TokenType.Minus,
-        BinaryOps.Multiply => TokenType.Multiplication,
-        BinaryOps.Divide => TokenType.Division,
-        BinaryOps.Modulus => TokenType.Modulus,
-        BinaryOps.Power => TokenType.Exponentiation,
-        BinaryOps.LessOrEqualThan => TokenType.LessOrEqual,
-        BinaryOps.LessThan => TokenType.Less,
-        BinaryOps.GreaterOrEqualThan => TokenType.GreaterOrEqual,
-        BinaryOps.GreaterThan => TokenType.Greater,
-        BinaryOps.Equal => TokenType.Equal,
-        BinaryOps.NotEqual => TokenType.NotEqual,
-        BinaryOps.And => TokenType.And,
-        BinaryOps.Or => TokenType.Or,
+        BinaryOperation.Add => TokenType.Plus,
+        BinaryOperation.Subtract => TokenType.Minus,
+        BinaryOperation.Multiply => TokenType.Multiplication,
+        BinaryOperation.Divide => TokenType.Division,
+        BinaryOperation.Modulus => TokenType.Modulus,
+        BinaryOperation.Power => TokenType.Exponentiation,
+        BinaryOperation.LessOrEqualThan => TokenType.LessOrEqual,
+        BinaryOperation.LessThan => TokenType.Less,
+        BinaryOperation.GreaterOrEqualThan => TokenType.GreaterOrEqual,
+        BinaryOperation.GreaterThan => TokenType.Greater,
+        BinaryOperation.Equal => TokenType.Equal,
+        BinaryOperation.NotEqual => TokenType.NotEqual,
+        BinaryOperation.And => TokenType.And,
+        BinaryOperation.Or => TokenType.Or,
         _ => throw new Exception(),
     };
 
