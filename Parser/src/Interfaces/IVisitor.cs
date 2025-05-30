@@ -9,11 +9,11 @@ public interface IVisitor
     void GotoVisit(string targetLabel, Result? condition);
     void ActionVisit(string identifier, Result[] arguments);
     void CodeBlockVisit(IStatement[] lines);
-    Result FuncVisit(string identifier, Result[] arguments);
+    Result FunctionVisit(string identifier, Result[] arguments);
     Result VariableVisit(string identifier);
     Result BinaryVisit(Result left, BinaryOperation op, Result right);
     Result UnaryVisit(Result argument, UnaryOperation op);
     Result LiteralVisit(Result value);
-    Result[] ParamsVisit(IExpression[] expressions);
+    Result[] ParametersVisit(IExpression[] expressions);
 }
 

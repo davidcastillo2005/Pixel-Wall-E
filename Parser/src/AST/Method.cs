@@ -13,7 +13,7 @@ public class Function(
 {
     public Result Accept(IVisitor visitor)
     {
-        return visitor.FuncVisit(Identifier, visitor.ParamsVisit(Arguments));
+        return visitor.FunctionVisit(Identifier, visitor.ParametersVisit(Arguments));
     }
 }
 
@@ -23,6 +23,6 @@ public class Action(
 {
     public void Accept(IVisitor visitor)
     {
-        visitor.ActionVisit(Identifier, visitor.ParamsVisit(Arguments));
+        visitor.ActionVisit(Identifier, visitor.ParametersVisit(Arguments));
     }
 }

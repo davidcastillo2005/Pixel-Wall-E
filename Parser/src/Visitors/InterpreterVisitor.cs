@@ -3,8 +3,21 @@ using PixelWallE.Parser.src.Interfaces;
 
 namespace PixelWallE.Parser.src.Visitors;
 
-public abstract class StatementVisitor(Context context) : IVisitor
+public abstract class InterpreterVisitor(Context context) : IVisitor
 {
+    /*
+    1- Variable
+    2- Action
+    3- Function
+    3- Parameters
+    4- Assign
+    5- Literal
+    6- Unary
+    7- Binary
+    8- Label
+    9- Goto
+    10- CodeBlock
+    */
     private readonly Context context = context;
 
     public Context Context { get; set; } = context;
@@ -57,7 +70,7 @@ public abstract class StatementVisitor(Context context) : IVisitor
         };
     }
 
-    public Result[] ParamsVisit(IExpression[] expressions)
+    public Result[] ParametersVisit(IExpression[] expressions)
     {
         List<Result> results = [];
         foreach (var item in expressions)
@@ -67,7 +80,7 @@ public abstract class StatementVisitor(Context context) : IVisitor
         return [.. results];
     }
 
-    public Result FuncVisit(string identifier, Result[] arguments)
+    public Result FunctionVisit(string identifier, Result[] arguments)
     {
         object[] objects = [.. arguments.Select(x => x.Value!)];
         var result = context.Functions[identifier](objects);
