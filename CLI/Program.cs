@@ -21,12 +21,9 @@ internal class Program
 
 
         var input = reader.ReadFile(@"C:\Users\Audiovisual1\Documents\Pixel Wall-E\0.pw");
-        var tokens = lexer.Tokenize(input!);
+        var tokens = lexer.Scan(input!);
         var ast = parser.Parse(tokens);
-
-        ast.SearchLabel(context);
-        ast.Accept(visitor);
-
+        
         // }
         // catch (Exception e)
         // {    

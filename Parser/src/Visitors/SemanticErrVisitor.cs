@@ -1,4 +1,4 @@
-using System.Reflection.Metadata.Ecma335;
+using PixelWallE.Lexer.src;
 using PixelWallE.Parser.src.AST;
 using PixelWallE.Parser.src.Enums;
 using PixelWallE.Parser.src.Interfaces;
@@ -21,41 +21,36 @@ public class SemanticErrVisitor(Context context) : IVisitor
     10- CodeBlock
     */
     private readonly Context Context = context;
-    public List<Exception> Exceptions { get; set; } = [];
+    public List<ParserException> Exceptions { get; set; } = [];
 
-    public void Visit(IStatement statement)
-    {
-        statement.Accept(this);
-    }
+    public void Visit(IStatement statement, Coord coord) => statement.Accept(this);
 
-    public Result VariableVisit(string identifier)
+    public Result VariableVisit(string identifier, Coord coord)
     {
         if (!Context.Variables.TryGetValue(identifier, out Result? value))
         {
-            AddException("Variable '" + identifier + "' not declared.");
+            //TODO Error: Variable 'identifier' not declared.
+            throw new Exception();
         }
-        else if (HasNullResult(value))
-        {
-            AddException($"Variable '{identifier}' is null.");
-        }
-        return NullResult();
+        return (Result)GetResult(coord, value);
     }
 
-    public void ActionVisit(string identifier, Result[] arguments)
+    public void ActionVisit(string identifier, Result[] arguments, Coord coord)
     {
-        if (!Context.Actions.ContainsKey(identifier))
+        if (Context.Handler.TryGetErrAction(identifier, arguments, this))
         {
-            AddException($"Method '{identifier}' not defined.");
+            AddException(coord, "Wall-E is already spawned.");
         }
     }
 
-    public Result FunctionVisit(string identifier, Result[] arguments)
+    public Result FunctionVisit(string identifier, Result[] arguments, Coord coord)
     {
-        if (!Context.Functions.ContainsKey(identifier))
+        if (Context.Handler.TryGetErrFunction(identifier, arguments, out Result result))
         {
-            AddException("Method '" + identifier + "' not defined.");
+            //TODO Error: Method 'identifier' not declared.
+            throw new Exception();
         }
-        return NullResult();
+        return result;
     }
 
     public Result[] ParametersVisit(IExpression[] parameters)
@@ -68,112 +63,95 @@ public class SemanticErrVisitor(Context context) : IVisitor
         return [.. results];
     }
 
-    public void AssignVisit(string identifier, Result value)
+    public void AssignVisit(string identifier, Result value, Coord coord)
     {
         if (!Context.Variables.ContainsKey(identifier))
         {
-            AddException($"Variable '{identifier}' not declared.");
+            //TODO Error: 
         }
         else
         {
-            Context.Variables[identifier] = NullResult();
+            Context.Variables[identifier] = GetResult(coord, value);
         }
     }
 
-    public Result LiteralVisit(Result value)
+    public Result LiteralVisit(Result value, Coord coord)
     {
-        return NullResult();
+        return GetResult(coord, value);
     }
 
-    public Result UnaryVisit(Result argument, UnaryOperation op)
+    public Result UnaryVisit(Result argument, UnaryOperationType op, Coord coord)
     {
-        if (HasNullResult(argument))
+        if (argument.Value is int && op == UnaryOperationType.Not)
         {
-            AddException("Cannot perform unary operation with null value.");
-            return NullResult();
+            //TODO Error: Unsupported {op} for {argument.Type}.
         }
-        else if (argument.Value is int argInt)
+        else if (argument.Value is bool && op == UnaryOperationType.Negative)
         {
-            if (op == UnaryOperation.Not)
-            {
-                AddException($"Cannot perform {op} operation on an integer.");
-                return NullResult();
-            }
+            //TODO Error: Unsupported {op} for {argument.Type}.
         }
-        else if (argument.Value is bool argBool)
-        {
-            //TODO Buscar casos de error semántico en que la variable es booleana y la operación es unaria.
-        }
-        else if (argument.Value is string argString)
-        {
-            //TODO Buscar casos de error semántico en que la variable es booleana y la operación es unaria.
-        }
-        return NullResult();
+        return GetResult(coord, argument);
     }
 
-    public Result BinaryVisit(Result left, BinaryOperation op, Result right)
+    public Result BinaryVisit(Result left, BinaryOperationType op, Result right, Coord coord)
     {
-        if (HasNullResult(left, right))
+        if (left.Type != right.Type)
         {
-            AddException("Cannot perform operation with null values.");
-            return NullResult();
+            AddException(coord, $"Unsupported {op} for {left.Type} and {right.Type}");
         }
-        else if (left.Type != right.Type)
+        else if (right.Value is int rInt && (op == BinaryOperationType.Divide || op == BinaryOperationType.Modulus) && rInt == 0)
         {
-            Exceptions.Add(new Exception($"Type mismatch: {left.Type} and {right.Type} cannot be used with operator {op}."));
-            return NullResult();
+            AddException(coord, "Division by zero is not supported");
         }
-        else if (right.Value is int rInt)
+        switch (op)
         {
-            if ((op == BinaryOperation.Divide || op == BinaryOperation.Modulus) && rInt == 0)
-            {
-                Exceptions.Add(new Exception("Division by zero is not allowed."));
-                return NullResult();
-            }
+            case BinaryOperationType.Add:
+            case BinaryOperationType.Subtract:
+            case BinaryOperationType.Multiply:
+            case BinaryOperationType.Divide:
+            case BinaryOperationType.Power:
+            case BinaryOperationType.Modulus:
+                return GetResult(coord, new Result(typeof(int)));
+            case BinaryOperationType.Or:
+            case BinaryOperationType.And:
+            case BinaryOperationType.LessOrEqualThan:
+            case BinaryOperationType.LessThan:
+            case BinaryOperationType.GreaterOrEqualThan:
+            case BinaryOperationType.GreaterThan:
+            case BinaryOperationType.Equal:
+            case BinaryOperationType.NotEqual:
+                return GetResult(coord, new Result(typeof(bool)));
+            default:
+                throw new Exception();
         }
-        else if (right.Value is bool rBool)
-        {
-            //TODO Poner mensaje al error: Cuando tratas de hacer una operacion binaria con un booleano.
-        }
-        else if (right.Value is string rString)
-        {
-            //TODO Poner mensaje al error: Cuando tratas de hacer una operacion binaria con un string.
-        }
-        else
-        {
-            AddException($"Unsupported operation: {op} for types {right.Type}");
-            return NullResult();
-        }
-        return NullResult();
     }
 
-    public void LabelVisit(string identifier, int line)
+    public void LabelVisit(string identifier, Coord coord)
     {
         if (Context.Labels.ContainsKey(identifier))
-            AddException("Label '" + identifier + "' already exists.");
+            throw new Exception();
+    }
+
+    public void GotoVisit(string targetLabel, Result? condition, Coord coord)
+    {
+        throw new NotImplementedException();
     }
 
     public void CodeBlockVisit(IStatement[] lines)
     {
-        foreach (var item in lines)
+        SearchLabel(lines);
+        foreach (IStatement? item in lines)
         {
-            item.Accept(this);
-        }
-    }
-
-    public void GotoVisit(string targetLabel, Result? condition)
-    {
-        if (Context.Labels.ContainsKey(targetLabel))
-        {
-            AddException("Label '" + targetLabel + "' not found.");
+            if (item is not LabelStatement)
+                item.Accept(this);
         }
     }
 
     public void SearchLabel(IStatement[] lines)
     {
-        for (int i = 0; i < lines.Length; i++)
+        foreach (var item in lines)
         {
-            if (lines[i] is LabelStmnt label)
+            if (item is LabelStatement label)
             {
                 label.Accept(this);
             }
@@ -181,29 +159,20 @@ public class SemanticErrVisitor(Context context) : IVisitor
     }
 
     #region Tools
-    private bool HasNullResult(params Result[] results)
+
+    private Result GetResult(Coord coord, Result value)
     {
-        foreach (var result in results)
+        var type = value.Type;
+        if (type != typeof(int) && type != typeof(bool) && type != typeof(string))
         {
-            if (result is null || result.Value is null)
-                return true;
+            AddException(coord, "Unsupported value");
         }
-        return false;
+        return new Result(type);
     }
 
-    private void AddException(string message)
+    public void AddException(Coord coord, string message)
     {
-        Exceptions.Add(new Exception(message));
-    }
-
-    private void AddException(Exception e)
-    {
-        Exceptions.Add(e);
-    }
-
-    private Result NullResult()
-    {
-        return NullResult();
+        Exceptions.Add(new ParserException(coord, message));
     }
 
     #endregion

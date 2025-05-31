@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reader", "Reader\Reader.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI", "CLI\CLI.csproj", "{F298A436-08C5-425A-B89B-B0E29242136E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewPixelWall-E", "..\View\ViewPixelWall-E\ViewPixelWall-E.csproj", "{C25BA7E5-E50F-69D4-C436-A15010F4B47D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,8 +71,23 @@ Global
 		{F298A436-08C5-425A-B89B-B0E29242136E}.Release|x64.Build.0 = Release|Any CPU
 		{F298A436-08C5-425A-B89B-B0E29242136E}.Release|x86.ActiveCfg = Release|Any CPU
 		{F298A436-08C5-425A-B89B-B0E29242136E}.Release|x86.Build.0 = Release|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Debug|x64.Build.0 = Debug|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Debug|x86.Build.0 = Debug|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Release|x64.ActiveCfg = Release|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Release|x64.Build.0 = Release|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Release|x86.ActiveCfg = Release|Any CPU
+		{C25BA7E5-E50F-69D4-C436-A15010F4B47D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B8E22580-ADAD-4C68-A0C9-5A452B05A2B7}
 	EndGlobalSection
 EndGlobal

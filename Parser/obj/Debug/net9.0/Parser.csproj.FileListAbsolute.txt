@@ -1,0 +1,16 @@
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\bin\Debug\net9.0\Parser.deps.json
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\bin\Debug\net9.0\Parser.dll
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\bin\Debug\net9.0\Parser.pdb
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\bin\Debug\net9.0\Lexer.dll
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\bin\Debug\net9.0\Lexer.pdb
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\Parser.csproj.AssemblyReference.cache
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\Parser.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\Parser.AssemblyInfoInputs.cache
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\Parser.AssemblyInfo.cs
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\Parser.csproj.CoreCompileInputs.cache
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\Parser.sourcelink.json
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\Parser.csproj.Up2Date
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\Parser.dll
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\refint\Parser.dll
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\Parser.pdb
+C:\Users\Audiovisual1\Documents\Pixel Wall-E\Parser\obj\Debug\net9.0\ref\Parser.dll

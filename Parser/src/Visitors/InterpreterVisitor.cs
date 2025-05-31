@@ -1,9 +1,11 @@
-﻿using PixelWallE.Parser.src.Enums;
+﻿using PixelWallE.Lexer.src;
+using PixelWallE.Parser.src.AST;
+using PixelWallE.Parser.src.Enums;
 using PixelWallE.Parser.src.Interfaces;
 
 namespace PixelWallE.Parser.src.Visitors;
 
-public abstract class InterpreterVisitor(Context context) : IVisitor
+public class InterpreterVisitor(Context context) : IVisitor
 {
     /*
     1- Variable
@@ -21,13 +23,12 @@ public abstract class InterpreterVisitor(Context context) : IVisitor
     private readonly Context context = context;
 
     public Context Context { get; set; } = context;
-    public void ActionVisit(string identifier, Result[] arguments)
+    public void ActionVisit(string identifier, Result[] arguments, Coord coord)
     {
-        object[] objects = [.. arguments.Select(x => x.Value!)];
-        context.Actions[identifier](objects);
+        Context.Handler.CallAction(identifier, arguments);
     }
 
-    public void GotoVisit(string targetLabel, Result? condition)
+    public void GotoVisit(string targetLabel, Result? condition, Coord coord)
     {
         if (condition is not null)
         {
@@ -38,37 +39,28 @@ public abstract class InterpreterVisitor(Context context) : IVisitor
         Context.Jump(targetLabel);
     }
 
-    public void AssignVisit(string identifier, Result value)
-    {
-        Context.Variables[identifier] = value;
-    }
+    public void AssignVisit(string identifier, Result value, Coord coord) => Context.Variables[identifier] = value;
 
-    public void LabelVisit(string identifier, int line)
-    {
-        throw new NotImplementedException();
-    }
+    public void LabelVisit(string identifier, Coord coord) => Context.Labels[identifier] = coord.Col;
 
-    public Result BinaryVisit(Result left, BinaryOperation op, Result right)
+    public Result BinaryVisit(Result left, BinaryOperationType op, Result right, Coord coord) => op switch
     {
-        return op switch
-        {
-            BinaryOperation.Add => left! + right!,
-            BinaryOperation.Subtract => left! - right!,
-            BinaryOperation.Multiply => left! * right!,
-            BinaryOperation.Divide => left! / right!,
-            BinaryOperation.Power => left! ^ right!,
-            BinaryOperation.Modulus => left! % right!,
-            BinaryOperation.LessOrEqualThan => left! <= right!,
-            BinaryOperation.GreaterOrEqualThan => left! >= right!,
-            BinaryOperation.LessThan => left! < right!,
-            BinaryOperation.GreaterThan => left! > right!,
-            BinaryOperation.Equal => left! == right!,
-            BinaryOperation.NotEqual => left! != right!,
-            BinaryOperation.And => left! & right!,
-            BinaryOperation.Or => left! | right!,
-            _ => throw new NotImplementedException(),
-        };
-    }
+        BinaryOperationType.Add => left! + right!,
+        BinaryOperationType.Subtract => left! - right!,
+        BinaryOperationType.Multiply => left! * right!,
+        BinaryOperationType.Divide => left! / right!,
+        BinaryOperationType.Power => left! ^ right!,
+        BinaryOperationType.Modulus => left! % right!,
+        BinaryOperationType.LessOrEqualThan => left! <= right!,
+        BinaryOperationType.GreaterOrEqualThan => left! >= right!,
+        BinaryOperationType.LessThan => left! < right!,
+        BinaryOperationType.GreaterThan => left! > right!,
+        BinaryOperationType.Equal => left! == right!,
+        BinaryOperationType.NotEqual => left! != right!,
+        BinaryOperationType.And => left! & right!,
+        BinaryOperationType.Or => left! | right!,
+        _ => throw new NotImplementedException(),
+    };
 
     public Result[] ParametersVisit(IExpression[] expressions)
     {
@@ -80,24 +72,24 @@ public abstract class InterpreterVisitor(Context context) : IVisitor
         return [.. results];
     }
 
-    public Result FunctionVisit(string identifier, Result[] arguments)
+    public Result FunctionVisit(string identifier, Result[] arguments, Coord coord)
     {
-        object[] objects = [.. arguments.Select(x => x.Value!)];
-        var result = context.Functions[identifier](objects);
-        return new Result(result);
+        return context.Handler.CallFunction(identifier, arguments);
     }
 
-    public Result LiteralVisit(Result value)
+    public Result LiteralVisit(Result value, Coord coord)
     {
         return value;
     }
 
-    public Result UnaryVisit(Result argument, UnaryOperation op)
+    public Result UnaryVisit(Result argument, UnaryOperationType op, Coord coord) => op switch
     {
-        throw new NotImplementedException();
-    }
+        UnaryOperationType.Not => !argument,
+        UnaryOperationType.Negative => -argument,
+        _ => throw new Exception(),
+    };
 
-    public Result VariableVisit(string identifier)
+    public Result VariableVisit(string identifier, Coord coord)
     {
         Context.Variables.TryGetValue(identifier, out Result? result);
         if (result is not null)
@@ -106,13 +98,11 @@ public abstract class InterpreterVisitor(Context context) : IVisitor
             throw new NotImplementedException();
     }
 
-    public void Visit(IStatement statement)
-    {
-        statement.Accept(this);
-    }
+    public void Visit(IStatement statement, Coord coord) => statement.Accept(this);
 
     public void CodeBlockVisit(IStatement[] lines)
     {
+        SearchLabel(lines);
         for (int i = 0; i < lines.Length; i++)
         {
             lines[i].Accept(this);
@@ -120,6 +110,17 @@ public abstract class InterpreterVisitor(Context context) : IVisitor
             {
                 i = Context.Labels[Context.TargetLabel!];
                 Context.EndJump();
+            }
+        }
+    }
+
+    public void SearchLabel(IStatement[] lines)
+    {
+        foreach (var item in lines)
+        {
+            if (item is LabelStatement label)
+            {
+                label.Accept(this);
             }
         }
     }

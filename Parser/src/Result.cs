@@ -20,6 +20,12 @@ public class Result : IParsable<Result>
         Type = type;
     }
 
+    public Result(Type type)
+    {
+        Value = default(Type);
+        Type = type;
+    }
+
     public bool ToBoolean()
     {
         if (Value is not null && Value is bool bValue)
