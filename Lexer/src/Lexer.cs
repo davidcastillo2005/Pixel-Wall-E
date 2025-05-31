@@ -8,70 +8,132 @@ public class Lexer
 
     private delegate bool IsIntOrId(string source, int startIndex);
 
-    private readonly Dictionary<string, Type> keyword = new Dictionary<string, Type>
+    private readonly Dictionary<string, TokenType> keyword = new Dictionary<string, TokenType>
     {
-        {"GoTo", Type.GoTo},
-        {"false", Type.Boolean},
-        {"true", Type.Boolean},
+        {"GoTo", TokenType.GoTo},
+        {"false", TokenType.Boolean},
+        {"true", TokenType.Boolean},
     };
-
-    private readonly List<(string symbol, Type token)> symbols =
-    [
-        ("==", Type.Equal), ("!=", Type.NotEqual), ("<=", Type.LessOrEqual), (">=", Type.GreaterOrEqual),
-        ("&&", Type.And), ("||", Type.Or), ("!", Type.Not), ("<-", Type.Assign), ("+", Type.Plus), ("-", Type.Minus),
-        ("^", Type.Exponentiation), ("*", Type.Multiplication), (">", Type.Greater), ("<", Type.Less),
-        ("/", Type.Division), ("%", Type.Modulus), ("(", Type.LeftCurly), (")", Type.RightCurly),
-        ("[", Type.LeftBracket), ("]", Type.RightBracket), (",", Type.Comma)
-    ];
 
     public Token[] Tokenize(string input)
     {
         bool ReadChar;
         do
         {
-            if (!(ReadChar = ReadWhiteSpace(input)))
-            {
-                if (ReadChar = TryGetNewLineToken(input, out Token? token)
+            if (!(ReadChar = ReadWhiteSpace(input))
+                && (ReadChar = TryGetNewLineToken(input, out Token? token)
                 || TryGetStrToken(input, out token)
                 || TryGetIntToken(input, out token)
                 || TryGetSymToken(input, out token)
-                || TryGetIdentifier(input, out token))
-                {
-                    tokens.Add(token!);
-                }
+                || TryGetIdentifier(input, out token)))
+            {
+                tokens.Add(token!);
             }
         } while (ReadChar);
 
-        tokens.Add(new Token(Type.EOF, "$"));
+        tokens.Add(new Token(TokenType.EOF, "$"));
         return [.. tokens];
     }
 
     private bool TryGetNewLineToken(string input, out Token? token)
     {
         int startIndex = SourceIndex;
-        if (MatchPattern(input, "\n") || MatchPattern(input, "\r\n"))
+        if (TryMatchPattern(input, "\n") || TryMatchPattern(input, "\r\n"))
         {
-            token = new Token(Type.NewLine, "\n");
+            token = new Token(TokenType.NewLine, "\n");
             return true;
         }
-        return ResetToken(startIndex, out token);
+        return ResetSourceIndex(startIndex, out token);
     }
 
     private bool ReadWhiteSpace(string input)
     {
         var space = false;
-        while (MatchPattern(input, " "))
+        while (TryMatchPattern(input, " "))
             space = true;
         return space;
     }
 
     #region Symbols
 
-    private bool TryGetSymToken(string input, out Token? token)
+    private bool TryGetSymToken(string source, out Token? token)
     {
         int startIndex = SourceIndex;
-        if (input)
-        return ResetToken(startIndex, out token);
+        int nextIndex = startIndex++;
+        if (source[SourceIndex] == '+')
+        {
+            return GetDefaultToken(new Token(TokenType.Plus, "+"), out token);
+        }
+        else if (source[SourceIndex] == '-')
+        {
+            return GetDefaultToken(new Token(TokenType.Minus, "-"), out token);
+        }
+        else if (source[SourceIndex] == '*')
+        {
+            if (source[nextIndex] == '*')
+            {
+                return GetDefaultToken(new Token(TokenType.Exponentiation, "**"), out token);
+            }
+            else
+            {
+                return GetDefaultToken(new Token(TokenType.Dot, "*"), out token);
+            }
+        }
+        else if (source[SourceIndex] == '/')
+        {
+            return GetDefaultToken(new Token(TokenType.Division, "/"), out token);
+        }
+        else if (source[SourceIndex] == '%')
+        {
+            return GetDefaultToken(new Token(TokenType.Modulus, "%"), out token);
+        }
+        else if (source[SourceIndex] == '(')
+        {
+            return GetDefaultToken(new Token(TokenType.LeftCurly, "("), out token);
+        }
+        else if (source[SourceIndex] == ')')
+        {
+            return GetDefaultToken(new Token(TokenType.RightCurly, ")"), out token);
+        }
+        else if (source[SourceIndex] == '[')
+        {
+            return GetDefaultToken(new Token(TokenType.LeftBracket, "["), out token);
+        }
+        else if (source[SourceIndex] == ']')
+        {
+            return GetDefaultToken(new Token(TokenType.RightBracket, "]"), out token);
+        }
+        else if (source[SourceIndex] == '<')
+        {
+            if (source[SourceIndex] == '=')
+            {
+                return GetDefaultToken(new Token(TokenType.LessOrEqual, "<="), out token);
+            }
+            else if (source[SourceIndex] == '-')
+            {
+                return GetDefaultToken(new Token(TokenType.Assign, "<-"), out token);
+            }
+            else
+            {
+                return GetDefaultToken(new Token(TokenType.Less, "<"), out token);
+            }
+        }
+        else if (source[SourceIndex] == '>')
+        {
+            if (source[SourceIndex] == '=')
+            {
+                return GetDefaultToken(new Token(TokenType.GreaterOrEqual, ">="), out token);
+            }
+            else
+            {
+                return GetDefaultToken(new Token(TokenType.Greater, ">"), out token);
+            }
+        }
+        else if (source[SourceIndex] == '=' && source[nextIndex] == '=')
+        {
+            return GetDefaultToken(new Token(TokenType.Equal, "=="), out token);
+        }
+        return ResetSourceIndex(startIndex, out token);
     }
 
     #endregion
@@ -82,10 +144,9 @@ public class Lexer
     {
         if (TryGetIntOrIdOrKey(input, IsInterger, out string? i))
         {
-            token = new Token(Type.Interger, i!);
-            return true;
+            return GetDefaultToken(new Token(TokenType.Interger, i!), out token);
         }
-        return ResetToken(SourceIndex, out token);
+        return ResetSourceIndex(SourceIndex, out token);
     }
 
     private bool IsInterger(string input, int startIndex)
@@ -99,12 +160,11 @@ public class Lexer
     {
         if (TryGetIntOrIdOrKey(input, IsIdentifier, out string? value))
         {
-            var isKeyword = keyword.TryGetValue(value!, out Type keywordType);
-            var type = isKeyword ? keywordType : Type.Identifier;
-            token = new Token(type, value!);
-            return true;
+            var isKeyword = keyword.TryGetValue(value!, out TokenType keywordType);
+            var type = isKeyword ? keywordType : TokenType.Identifier;
+            return GetDefaultToken(new Token(type, value!), out token);
         }
-        return ResetToken(SourceIndex, out token);
+        return ResetSourceIndex(SourceIndex, out token);
     }
 
     private bool IsIdentifier(string input, int startIndex)
@@ -117,10 +177,9 @@ public class Lexer
 
     private bool TryGetStrToken(string input, out Token? token)
     {
-        if (MatchPattern(input, "\"") && TryGetStrValue(input, out string? value) && MatchPattern(input, "\""))
+        if (TryMatchPattern(input, "\"") && TryGetStrValue(input, out string? value) && TryMatchPattern(input, "\""))
         {
-            token = new Token(Type.String, value!);
-            return true;
+            return GetDefaultToken(new Token(TokenType.String, value!), out token);
         }
         token = null;
         return false;
@@ -140,7 +199,7 @@ public class Lexer
             tokenValue = temp;
             return true;
         }
-        return ResetToken(startIndex, out tokenValue);
+        return ResetSourceIndex(startIndex, out tokenValue);
     }
 
     #endregion
@@ -162,10 +221,10 @@ public class Lexer
             tokenValue = temp;
             return true;
         }
-        return ResetToken(startIndex, out tokenValue);
+        return ResetSourceIndex(startIndex, out tokenValue);
     }
 
-    private bool MatchPattern(string input, string pattern)
+    private bool TryMatchPattern(string input, string pattern)
     {
         int startIndex = SourceIndex;
 
@@ -181,11 +240,17 @@ public class Lexer
         return true;
     }
 
-    private bool ResetToken<T>(int startIndex, out T? token)
+    private bool ResetSourceIndex<T>(int startIndex, out T? token)
     {
         SourceIndex = startIndex;
         token = default;
         return false;
+    }
+
+    private bool GetDefaultToken<T>(T value, out T? output)
+    {
+        output = value;
+        return true;
     }
 
     #endregion

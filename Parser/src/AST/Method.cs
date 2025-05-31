@@ -12,9 +12,7 @@ public class Function(
     IExpression[] arguments) : Method(identifier, arguments), IExpression
 {
     public Result Accept(IVisitor visitor)
-    {
-        return visitor.FunctionVisit(Identifier, visitor.ParametersVisit(Arguments));
-    }
+        => visitor.FunctionVisit(Identifier, visitor.ParametersVisit(Arguments));
 }
 
 public class Action(
@@ -22,7 +20,5 @@ public class Action(
     IExpression[] arguments) : Method(identifier, arguments), IStatement
 {
     public void Accept(IVisitor visitor)
-    {
-        visitor.ActionVisit(Identifier, visitor.ParametersVisit(Arguments));
-    }
+        => visitor.ActionVisit(Identifier, visitor.ParametersVisit(Arguments));
 }

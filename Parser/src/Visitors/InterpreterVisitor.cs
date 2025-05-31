@@ -48,24 +48,24 @@ public abstract class InterpreterVisitor(Context context) : IVisitor
         throw new NotImplementedException();
     }
 
-    public Result BinaryVisit(Result left, BinaryOperation op, Result right)
+    public Result BinaryVisit(Result left, BinaryOperationType op, Result right)
     {
         return op switch
         {
-            BinaryOperation.Add => left! + right!,
-            BinaryOperation.Subtract => left! - right!,
-            BinaryOperation.Multiply => left! * right!,
-            BinaryOperation.Divide => left! / right!,
-            BinaryOperation.Power => left! ^ right!,
-            BinaryOperation.Modulus => left! % right!,
-            BinaryOperation.LessOrEqualThan => left! <= right!,
-            BinaryOperation.GreaterOrEqualThan => left! >= right!,
-            BinaryOperation.LessThan => left! < right!,
-            BinaryOperation.GreaterThan => left! > right!,
-            BinaryOperation.Equal => left! == right!,
-            BinaryOperation.NotEqual => left! != right!,
-            BinaryOperation.And => left! & right!,
-            BinaryOperation.Or => left! | right!,
+            BinaryOperationType.Add => left! + right!,
+            BinaryOperationType.Subtract => left! - right!,
+            BinaryOperationType.Multiply => left! * right!,
+            BinaryOperationType.Divide => left! / right!,
+            BinaryOperationType.Power => left! ^ right!,
+            BinaryOperationType.Modulus => left! % right!,
+            BinaryOperationType.LessOrEqualThan => left! <= right!,
+            BinaryOperationType.GreaterOrEqualThan => left! >= right!,
+            BinaryOperationType.LessThan => left! < right!,
+            BinaryOperationType.GreaterThan => left! > right!,
+            BinaryOperationType.Equal => left! == right!,
+            BinaryOperationType.NotEqual => left! != right!,
+            BinaryOperationType.And => left! & right!,
+            BinaryOperationType.Or => left! | right!,
             _ => throw new NotImplementedException(),
         };
     }
@@ -92,7 +92,7 @@ public abstract class InterpreterVisitor(Context context) : IVisitor
         return value;
     }
 
-    public Result UnaryVisit(Result argument, UnaryOperation op)
+    public Result UnaryVisit(Result argument, UnaryOperationType op)
     {
         throw new NotImplementedException();
     }

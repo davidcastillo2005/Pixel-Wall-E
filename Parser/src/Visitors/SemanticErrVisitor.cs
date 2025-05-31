@@ -1,4 +1,3 @@
-using System.Reflection.Metadata.Ecma335;
 using PixelWallE.Parser.src.AST;
 using PixelWallE.Parser.src.Enums;
 using PixelWallE.Parser.src.Interfaces;
@@ -85,7 +84,7 @@ public class SemanticErrVisitor(Context context) : IVisitor
         return NullResult();
     }
 
-    public Result UnaryVisit(Result argument, UnaryOperation op)
+    public Result UnaryVisit(Result argument, UnaryOperationType op)
     {
         if (HasNullResult(argument))
         {
@@ -94,7 +93,7 @@ public class SemanticErrVisitor(Context context) : IVisitor
         }
         else if (argument.Value is int argInt)
         {
-            if (op == UnaryOperation.Not)
+            if (op == UnaryOperationType.Not)
             {
                 AddException($"Cannot perform {op} operation on an integer.");
                 return NullResult();
@@ -111,7 +110,7 @@ public class SemanticErrVisitor(Context context) : IVisitor
         return NullResult();
     }
 
-    public Result BinaryVisit(Result left, BinaryOperation op, Result right)
+    public Result BinaryVisit(Result left, BinaryOperationType op, Result right)
     {
         if (HasNullResult(left, right))
         {
@@ -125,7 +124,7 @@ public class SemanticErrVisitor(Context context) : IVisitor
         }
         else if (right.Value is int rInt)
         {
-            if ((op == BinaryOperation.Divide || op == BinaryOperation.Modulus) && rInt == 0)
+            if ((op == BinaryOperationType.Divide || op == BinaryOperationType.Modulus) && rInt == 0)
             {
                 Exceptions.Add(new Exception("Division by zero is not allowed."));
                 return NullResult();
@@ -153,14 +152,6 @@ public class SemanticErrVisitor(Context context) : IVisitor
             AddException("Label '" + identifier + "' already exists.");
     }
 
-    public void CodeBlockVisit(IStatement[] lines)
-    {
-        foreach (var item in lines)
-        {
-            item.Accept(this);
-        }
-    }
-
     public void GotoVisit(string targetLabel, Result? condition)
     {
         if (Context.Labels.ContainsKey(targetLabel))
@@ -169,11 +160,20 @@ public class SemanticErrVisitor(Context context) : IVisitor
         }
     }
 
+    public void CodeBlockVisit(IStatement[] lines)
+    {
+        for (int i = 0; i < lines.Length; i++)
+        {
+            IStatement? item = lines[i];
+            item.Accept(this);
+        }
+    }
+
     public void SearchLabel(IStatement[] lines)
     {
         for (int i = 0; i < lines.Length; i++)
         {
-            if (lines[i] is LabelStmnt label)
+            if (lines[i] is LabelStatement label)
             {
                 label.Accept(this);
             }
@@ -193,7 +193,7 @@ public class SemanticErrVisitor(Context context) : IVisitor
 
     private void AddException(string message)
     {
-        Exceptions.Add(new Exception(message));
+        Exceptions.Add(new ParserException(message));
     }
 
     private void AddException(Exception e)

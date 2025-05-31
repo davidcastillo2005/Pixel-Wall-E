@@ -1,8 +1,8 @@
 namespace PixelWallE.Lexer.src;
 
-public class Token(Type type, string value)
+public class Token(TokenType type, string value)
 {
-    public Type Type { get; } = type;
+    public TokenType Type { get; } = type;
     public string Value = value;
 
     public override string ToString()
@@ -11,9 +11,9 @@ public class Token(Type type, string value)
     }
 }
 
-public enum Type
+public enum TokenType
 {
-    Identifier, Keyword, Plus, Minus, Multiplication, Division,
+    Identifier, Keyword, Plus, Minus, Dot, Division,
     Exponentiation, Modulus, String
     , LeftCurly, RightCurly, LeftBracket, RightBracket,
     LessOrEqual, GreaterOrEqual, Less, Greater, Equal, Interger, Boolean, Assign,

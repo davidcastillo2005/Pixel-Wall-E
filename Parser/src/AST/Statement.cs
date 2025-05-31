@@ -1,32 +1,29 @@
 using PixelWallE.Parser.src.Interfaces;
 namespace PixelWallE.Parser.src.AST;
 
-public class AssignStmnt(string identifier, IExpression value) : IStatement
+public class AssignStatement(string identifier, IExpression value) : IStatement
 {
     public string Identifier { get; } = identifier;
     public IExpression Value { get; } = value;
 
     public void Accept(IVisitor visitor)
-    {
-        visitor.AssignVisit(Identifier, Value.Accept(visitor));
-    }
+        => visitor.AssignVisit(Identifier, Value.Accept(visitor));
 }
 
-public class LabelStmnt(string value, int index) : IStatement
+public class LabelStatement(string identifier, int line) : IStatement
 {
-    public string Value { get; set; } = value;
-    public int Index { get; } = index;
+    public string Identifier { get; set; } = identifier;
+    public int Line { get; } = line;
 
-    public void Accept(IVisitor visitor) { }
+    public void Accept(IVisitor visitor)
+        => visitor.LabelVisit(Identifier, Line);
 }
 
-public class GoToStmnt(string targetLabel, IExpression? condition) : IStatement
+public class GoToStatement(string targetLabel, IExpression? condition) : IStatement
 {
     public string TargetLabel { get; } = targetLabel;
     public IExpression? Condition { get; } = condition;
 
     public void Accept(IVisitor visitor)
-    {
-        visitor.GotoVisit(TargetLabel, Condition?.Accept(visitor));
-    }
+        => visitor.GotoVisit(TargetLabel, Condition?.Accept(visitor));
 }

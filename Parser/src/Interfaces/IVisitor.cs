@@ -11,8 +11,8 @@ public interface IVisitor
     void CodeBlockVisit(IStatement[] lines);
     Result FunctionVisit(string identifier, Result[] arguments);
     Result VariableVisit(string identifier);
-    Result BinaryVisit(Result left, BinaryOperation op, Result right);
-    Result UnaryVisit(Result argument, UnaryOperation op);
+    Result BinaryVisit(Result left, BinaryOperationType op, Result right);
+    Result UnaryVisit(Result argument, UnaryOperationType op);
     Result LiteralVisit(Result value);
     Result[] ParametersVisit(IExpression[] expressions);
 }
