@@ -1,4 +1,3 @@
-using System.Drawing;
 using PixelWallE.Lexer.src;
 using PixelWallE.Parser.src.Enums;
 using PixelWallE.Parser.src.Interfaces;
@@ -14,12 +13,10 @@ public class BinaryExpreNode(IExpression left, IExpression right, BinaryOperatio
     public Result Accept(IVisitor visitor)
         => visitor.BinaryVisit(LeftArg.Accept(visitor), OperatorType, RightArg.Accept(visitor), Coord);
 }
-
 public class UnaryExpreNode : IExpression
 {
     public IExpression Argument { get; set; }
     public UnaryOperationType OperatorType { get; set; }
-
     public Coord Coord { get; set; }
 
     public UnaryExpreNode(IExpression argument, UnaryOperationType opType, Coord coord)
